@@ -2,7 +2,7 @@ import { useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import React, { useContext } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { UserContext } from "../_layout";
+import { UserContext } from "../../context/UserContext";
 
 const Home = () => {
   const { user, setUser } = useContext(UserContext);

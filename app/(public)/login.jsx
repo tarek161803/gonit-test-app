@@ -4,7 +4,7 @@ import { useContext, useState } from "react";
 import { Alert, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import COLORS from "../../constants/Colors";
 import { BASE_URL } from "../../constants/Utils";
-import { UserContext } from "../_layout";
+import { UserContext } from "../../context/UserContext";
 
 const Login = () => {
   const { setUser } = useContext(UserContext);
@@ -45,7 +45,7 @@ const Login = () => {
     <View style={styles.container}>
       <View>
         <View>
-          <Text style={styles.label}>Email:</Text>
+          <Text style={styles.label}>Email</Text>
           <TextInput
             value={email}
             onChangeText={setEmail}
@@ -55,7 +55,7 @@ const Login = () => {
           />
         </View>
         <View style={{ marginTop: 20 }}>
-          <Text style={styles.label}>Password:</Text>
+          <Text style={styles.label}>Password</Text>
           <TextInput
             value={password}
             onChangeText={setPassword}

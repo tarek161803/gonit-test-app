@@ -1,9 +1,8 @@
 import { Slot, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
-import React, { createContext, useContext, useState } from "react";
+import React, { useContext } from "react";
 import { Alert } from "react-native";
-
-export const UserContext = createContext(null);
+import UserProvider, { UserContext } from "../context/UserContext";
 
 const InitialLayout = () => {
   const router = useRouter();
@@ -36,12 +35,10 @@ const InitialLayout = () => {
 };
 
 const MainLayout = () => {
-  const [user, setUser] = useState(null);
-
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserProvider>
       <InitialLayout />
-    </UserContext.Provider>
+    </UserProvider>
   );
 };
 
