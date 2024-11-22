@@ -1,27 +1,41 @@
-import { useRouter } from "expo-router";
-import * as SecureStore from "expo-secure-store";
-import React, { useContext } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import React, { useContext, useEffect, useState } from "react";
+import { Alert, SafeAreaView, ScrollView, StyleSheet } from "react-native";
+import QuestionItem from "../../components/QuestionItem";
+import { BASE_URL } from "../../constants/Utils";
 import { UserContext } from "../../context/UserContext";
 
 const Home = () => {
-  const { user, setUser } = useContext(UserContext);
-  const router = useRouter();
-  const handleLogout = async () => {
-    await SecureStore.deleteItemAsync("user");
-    await SecureStore.deleteItemAsync("token");
-    setUser(null);
-    router.replace("login");
+  const { user } = useContext(UserContext);
+  const [questions, setQuestions] = useState([]);
+
+  const getQuestions = async () => {
+    try {
+      const response = await fetch(BASE_URL + "questions", {
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+        },
+      });
+      const data = await response.json();
+      if (data.success) {
+        setQuestions(data.data);
+      } else {
+        Alert.alert("Something Went Wrong!", "Please try again later.");
+      }
+    } catch {
+      Alert.alert("Error", "Failed to fetch questions.");
+    }
   };
 
-  return (
-    <View style={styles.container}>
-      <Text>Hello {user?.user?.name}</Text>
+  useEffect(() => {
+    getQuestions();
+  }, []);
 
-      <Pressable onPress={handleLogout}>
-        <Text>Logout</Text>
-      </Pressable>
-    </View>
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView style={styles.questionsContainer}>
+        {questions.length > 0 && questions.map((question) => <QuestionItem key={question._id} question={question} />)}
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -30,7 +44,9 @@ export default Home;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    backgroundColor: "#ffffff",
+  },
+  questionsContainer: {
     padding: 10,
   },
 });

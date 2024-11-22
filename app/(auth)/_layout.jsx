@@ -1,10 +1,33 @@
-import { Stack } from "expo-router";
-import React from "react";
+import { Stack, useRouter } from "expo-router";
+import * as SecureStore from "expo-secure-store";
+import React, { useContext } from "react";
+import { Pressable, Text } from "react-native";
+import { UserContext } from "../../context/UserContext";
 
 const AuthLayout = () => {
+  const { setUser } = useContext(UserContext);
+  const router = useRouter();
+  const handleLogout = async () => {
+    await SecureStore.deleteItemAsync("user");
+    await SecureStore.deleteItemAsync("token");
+    setUser(null);
+    router.replace("login");
+  };
   return (
     <Stack>
-      <Stack.Screen name="home" options={{ title: "Home" }} />
+      <Stack.Screen
+        name="home"
+        options={{
+          title: "Home",
+          headerRight: () => (
+            <Pressable onPress={handleLogout}>
+              <Text>Log Out</Text>
+            </Pressable>
+          ),
+        }}
+      />
+
+      <Stack.Screen name="question" options={{ title: "Question", headerShown: false }} />
     </Stack>
   );
 };

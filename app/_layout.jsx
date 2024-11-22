@@ -1,6 +1,6 @@
 import { Slot, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Alert } from "react-native";
 import UserProvider, { UserContext } from "../context/UserContext";
 
@@ -27,7 +27,7 @@ const InitialLayout = () => {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     handleGetUserInfo();
   }, []);
 
