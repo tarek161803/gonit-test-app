@@ -1,11 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { SvgXml } from "react-native-svg";
 import QuestionItem from "../../../components/QuestionItem";
+import { BASE_URL } from "../../../constants/Utils";
 import { UserContext } from "../../../context/UserContext";
 
 const AnswersSection = () => {
-  const { question } = useContext(UserContext);
+  const { question, user, setQuestion } = useContext(UserContext);
   const answerOptions = [...question.wrongAnswers, question.answer].sort();
+  const [isLoading, setIsLoading] = useState(false);
 
   const [answerStyle, setAnswerStyle] = useState(null);
   const [userAnswer, setUserAnswer] = useState(null);
@@ -13,6 +16,31 @@ const AnswersSection = () => {
 
   const handleCheckAnswer = (selectedAnswer) => {
     setUserAnswer(selectedAnswer);
+  };
+
+  const handleVerify = async () => {
+    if (question.status === "verified") {
+      return;
+    }
+
+    setIsLoading(true);
+    const response = await fetch(BASE_URL + `questions/${question._id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user.token}`,
+      },
+      body: JSON.stringify({ status: "verified" }),
+    });
+
+    const data = await response.json();
+    if (data.success) {
+      setQuestion(data.data);
+      setIsLoading(false);
+    } else {
+      Alert.alert("Error", "Failed to Verify Question.");
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -26,6 +54,7 @@ const AnswersSection = () => {
 
       timeoutId = setTimeout(() => {
         setAnswerStyle(null);
+        setUserAnswer(null);
       }, 2000);
     }
 
@@ -36,10 +65,18 @@ const AnswersSection = () => {
 
   return (
     <SafeAreaView>
-      <ScrollView>
-        <QuestionItem question={question} />
+      <ScrollView contentContainerStyle={{ paddingHorizontal: 16 }}>
+        <View style={{ marginVertical: 12 }}>
+          <QuestionItem question={question} />
+        </View>
 
-        {question.answerType === "input" ? (
+        {question.image && (
+          <View style={styles.mainImageContainer}>
+            <SvgXml xml={question.image} width="100%" height="200" />
+          </View>
+        )}
+
+        {question.answerType === "multiple" ? (
           <View style={styles.container}>
             {question.wrongAnswers &&
               answerOptions.map((option, index) => (
@@ -67,6 +104,12 @@ const AnswersSection = () => {
             </Pressable>
           </View>
         )}
+
+        <Pressable onPress={handleVerify} style={styles.verifyButton}>
+          <Text style={styles.verifyButtonText}>
+            {isLoading ? "Verifying..." : question.status === "verified" ? "Verified" : "Verify Question"}
+          </Text>
+        </Pressable>
       </ScrollView>
     </SafeAreaView>
   );
@@ -77,8 +120,13 @@ export default AnswersSection;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  mainImageContainer: {
     marginVertical: 10,
-    paddingHorizontal: 16,
+    padding: 20,
+    backgroundColor: "#ffffff",
+    alignItems: "center",
+    borderRadius: 12,
   },
   answerOption: {
     marginVertical: 5,
@@ -89,8 +137,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   answerText: {
-    fontSize: 16,
+    fontSize: 18,
     color: "#333",
+    fontWeight: "bold",
   },
   correctAnswer: {
     backgroundColor: "#22c55e",
@@ -116,6 +165,20 @@ const styles = StyleSheet.create({
   checkButtonText: {
     color: "#ffffff",
     fontSize: 16,
+    fontWeight: "bold",
+  },
+
+  verifyButton: {
+    padding: 16,
+    marginVertical: 16,
+    borderRadius: 8,
+    backgroundColor: "#22c55e",
+    alignItems: "center",
+  },
+
+  verifyButtonText: {
+    color: "#ffffff",
+    fontSize: 18,
     fontWeight: "bold",
   },
 });

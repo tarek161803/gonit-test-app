@@ -104,7 +104,6 @@ export default QuestionItem;
 
 const styles = StyleSheet.create({
   questionContainer: {
-    marginVertical: 10,
     borderRadius: 14,
     overflow: "hidden",
   },
