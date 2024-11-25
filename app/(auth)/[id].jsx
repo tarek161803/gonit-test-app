@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Alert, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { SvgXml } from "react-native-svg";
-import QuestionItem from "../../../components/QuestionItem";
-import { BASE_URL } from "../../../constants/Utils";
-import { UserContext } from "../../../context/UserContext";
+import QuestionItem from "../../components/QuestionItem";
+import { BASE_URL } from "../../constants/Utils";
+import { UserContext } from "../../context/UserContext";
 
 const AnswersSection = () => {
   const { question, user, setQuestion } = useContext(UserContext);

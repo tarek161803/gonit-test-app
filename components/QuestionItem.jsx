@@ -7,49 +7,51 @@ import useQuestionWithLatexAndImage from "../hooks/useQuestionWithLatexAndImage"
 
 const renderHtml = (htmlContent) => {
   return `
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-              <style>
-                body {
-                  margin: 0;
-                 background-color: transparent;
-                  font-family: Arial, sans-serif;
-                  color: #333333;
-                }
-                  table {
-                  border-collapse: collapse;
-                  margin: 0;
-                  overflow: hidden;
-                  table-layout: fixed;
-                  width: 100%;}
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <style>
 
+        * {
+          box-sizing: border-box;
+          padding: 0;
+          margin: 0;
+        }
 
-                td,
-                th {
-                  border: 1px solid #222222;
-                  box-sizing: border-box;
-                  min-width: 1em;
-                  padding-top: 0px;
-                  padding-bottom: 0px;
-                  padding-left: 8px;
-                  padding-right: 8px;
-                  position: relative;
-                }
-     
-                .content {
-                background-color: #f3ebe5;
-                  border-radius: 12px;
-                  padding: 15px;
-                  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                }
-              </style>
-            </head>
-            <body>
-              <div class="content">${htmlContent}</div>
-            </body>
-            </html>
-          `;
+        body {
+          margin: 0;
+          padding: 0;
+          background-color: transparent;
+          font-family: Arial, sans-serif;
+        }
+
+        p {
+          line-height: 1.5;
+        }
+
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin: 0;
+        }
+
+         th, td {
+          padding: 8px 8px;
+        }
+
+        .content {
+          display: block;
+          padding: 24px;
+          border-radius: 12px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="content">${htmlContent}</div>
+    </body>
+    </html>
+  `;
 };
 
 const QuestionItem = ({ question }) => {
@@ -60,19 +62,20 @@ const QuestionItem = ({ question }) => {
 
   const handleWebViewMessage = (event, questionId) => {
     const height = parseInt(event.nativeEvent.data, 10);
-    setWebViewHeights((prev) => ({
-      ...prev,
-      [questionId]: height,
-    }));
+    if (!isNaN(height)) {
+      setWebViewHeights((prev) => ({
+        ...prev,
+        [questionId]: height,
+      }));
+    }
   };
 
   return (
     <Pressable
       onPress={() => {
         setQuestion(question);
-        router.navigate(`/question/${question._id}`);
+        router.push(`/${question._id}`);
       }}
-      key={question._id}
       style={[
         styles.questionContainer,
         { height: webViewHeights[question._id] || 100 }, // Fallback height
@@ -83,18 +86,18 @@ const QuestionItem = ({ question }) => {
         }}
         injectedJavaScript={`
           (function() {
-            setTimeout(function() {
-              window.ReactNativeWebView.postMessage(
-                document.documentElement.scrollHeight
-              );
-            }, 0);
+            const calculateHeight = () => {
+              const height = document.documentElement.scrollHeight;
+              window.ReactNativeWebView.postMessage(height.toString());
+            };
+            calculateHeight();
+            window.addEventListener('resize', calculateHeight);
           })();
         `}
         onMessage={(event) => handleWebViewMessage(event, question._id)}
         javaScriptEnabled={true}
-        style={styles.webview}
+        style={[styles.webview, { height: webViewHeights[question._id] || 100 }]} // Adjust WebView height
         scrollEnabled={false}
-        scalesPageToFit={false}
       />
     </Pressable>
   );
@@ -106,8 +109,10 @@ const styles = StyleSheet.create({
   questionContainer: {
     borderRadius: 14,
     overflow: "hidden",
+    backgroundColor: "#f3ebe5",
   },
   webview: {
     flex: 1,
+    backgroundColor: "transparent",
   },
 });

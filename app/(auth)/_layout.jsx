@@ -27,7 +27,7 @@ const AuthLayout = () => {
         }}
       />
 
-      <Stack.Screen name="question" options={{ title: "Question", headerShown: false }} />
+      <Stack.Screen name="[id]" options={{ title: "Question" }} />
     </Stack>
   );
 };
