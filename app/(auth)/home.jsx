@@ -2,6 +2,9 @@ import React, { useContext, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
   Pressable,
   RefreshControl,
   SafeAreaView,
@@ -9,8 +12,10 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
+
 import QuestionItem from "../../components/QuestionItem";
 import { BASE_URL } from "../../constants/Utils";
 import { UserContext } from "../../context/UserContext";
@@ -20,7 +25,8 @@ const Home = () => {
   const [questions, setQuestions] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [inputPage, setInputPage] = useState(1);
-  const [page, setPage] = useState(null);
+  const [page, setPage] = useState(1);
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
 
   const getQuestions = async () => {
     setRefreshing(true);
@@ -50,6 +56,7 @@ const Home = () => {
   };
 
   const handlePageChange = () => {
+    Keyboard.dismiss();
     if (totalPages && inputPage > totalPages) {
       Alert.alert("Invalid Page", `Please enter a valid full number less than or equal to ${totalPages}.`);
       return;
@@ -79,40 +86,86 @@ const Home = () => {
     getQuestions();
   }, [page]);
 
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
+      setKeyboardVisible(true);
+    });
+    const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
+      setKeyboardVisible(false);
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
-        style={styles.questionsContainer}>
-        {questions.length > 0 &&
-          questions.map((question) => (
-            <View style={styles.questionItem} key={question._id}>
-              <QuestionItem question={question} />
-              <View style={styles.questionBadge}>
-                <Text style={styles.questionBadgeText}>{question.status}</Text>
-              </View>
-            </View>
-          ))}
-      </ScrollView>
-      <View style={styles.pageSearchContainer}>
-        <TextInput
-          placeholder="Page"
-          value={String(inputPage)}
-          onSubmitEditing={handlePageChange}
-          onChangeText={(value) => {
-            setInputPage(value);
-          }}
-          style={styles.pageInput}
-          keyboardType="numeric"
-        />
-        <Pressable onPress={handlePageChange} style={styles.goButton}>
-          {refreshing ? (
-            <ActivityIndicator color="#ffffff" size="small" />
-          ) : (
-            <Text style={styles.goButtonText}>Go</Text>
-          )}
-        </Pressable>
-      </View>
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "height" : "padding"} style={{ flex: 1 }}>
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()} accessible={false}>
+          <ScrollView
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
+            style={styles.questionsContainer}>
+            {questions.length > 0 &&
+              questions.map((question) => (
+                <View style={styles.questionItem} key={question._id}>
+                  <QuestionItem question={question} />
+                  <View style={styles.questionBadge}>
+                    <Text style={styles.questionBadgeText}>{question.status}</Text>
+                  </View>
+                </View>
+              ))}
+          </ScrollView>
+        </TouchableWithoutFeedback>
+        <View
+          style={[styles.pageSearchContainer, { marginBottom: keyboardVisible && Platform.OS === "ios" ? 100 : 0 }]}>
+          <TextInput
+            placeholder="Page"
+            value={String(inputPage)}
+            onSubmitEditing={handlePageChange}
+            onChangeText={(value) => {
+              setInputPage(value);
+            }}
+            style={styles.pageInput}
+            keyboardType="numeric"
+          />
+          <Text>of {totalPages}</Text>
+          <Pressable onPress={handlePageChange} style={styles.goButton}>
+            {refreshing ? (
+              <ActivityIndicator color="#ffffff" size="small" />
+            ) : (
+              <Text style={styles.goButtonText}>Go</Text>
+            )}
+          </Pressable>
+
+          <View style={{ flexDirection: "row", gap: 12 }}>
+            <Pressable
+              style={styles.navigateButton}
+              onPress={() => {
+                if (refreshing) return;
+                if (+page > 1) {
+                  setPage(+page - 1);
+                  setInputPage(+page - 1);
+                }
+              }}>
+              <Text style={{ fontSize: 24 }}>{`<`}</Text>
+            </Pressable>
+            <Pressable
+              style={styles.navigateButton}
+              onPress={() => {
+                if (refreshing) return;
+
+                if (+page < +totalPages) {
+                  setPage(+page + 1);
+                  setInputPage(+page + 1);
+                }
+              }}>
+              <Text style={{ fontSize: 24 }}>{`>`}</Text>
+            </Pressable>
+          </View>
+        </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
@@ -125,6 +178,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
   },
   questionsContainer: {
+    flex: 1,
     padding: 10,
   },
 
@@ -178,5 +232,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     color: "#ffffff",
+  },
+
+  navigateButton: {
+    backgroundColor: "#e9e9e9",
+    height: 48,
+    width: 48,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 8,
   },
 });

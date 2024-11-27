@@ -64,15 +64,15 @@ const AnswersSection = () => {
   }, [userAnswer, question.answer]);
 
   return (
-    <SafeAreaView>
-      <ScrollView contentContainerStyle={{ paddingHorizontal: 16 }}>
+    <SafeAreaView style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={{ paddingHorizontal: 16, backgroundColor: "#ffffff", flexGrow: 1 }}>
         <View style={{ marginVertical: 12 }}>
           <QuestionItem question={question} />
         </View>
 
         {question.image && (
           <View style={styles.mainImageContainer}>
-            <SvgXml xml={question.image} width="100%" height="200" />
+            <SvgXml xml={question.image} width="100%" height={200} />
           </View>
         )}
 
@@ -123,10 +123,11 @@ const styles = StyleSheet.create({
   },
   mainImageContainer: {
     marginVertical: 10,
-    padding: 20,
-    backgroundColor: "#ffffff",
+    padding: 10,
+    backgroundColor: "#f3f3f3",
     alignItems: "center",
     borderRadius: 12,
+    height: "auto",
   },
   answerOption: {
     marginVertical: 5,

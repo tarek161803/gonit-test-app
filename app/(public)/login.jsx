@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useContext, useState } from "react";
-import { Alert, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import COLORS from "../../constants/Colors";
 import { BASE_URL } from "../../constants/Utils";
 import { UserContext } from "../../context/UserContext";
@@ -10,8 +10,17 @@ const Login = () => {
   const { setUser } = useContext(UserContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const handleLogin = async () => {
+    if (isLoading) return;
+
+    if (!email || !password) {
+      Alert.alert("Invalid Credentials!", "Please fill in all fields.");
+      return;
+    }
+
+    setIsLoading(true);
     try {
       const response = await fetch(BASE_URL + "/auth/login", {
         method: "POST",
@@ -33,11 +42,14 @@ const Login = () => {
           token: data.token,
         });
         router.replace("home");
+        setIsLoading(false);
       } else {
         Alert.alert("Invalid Credentials!", "Please try again.");
+        setIsLoading(false);
       }
-    } catch (error) {
+    } catch {
       Alert.alert("Something Went Wrong!", "Please try again later.");
+      setIsLoading(false);
     }
   };
 
@@ -45,7 +57,7 @@ const Login = () => {
     <View style={styles.container}>
       <View>
         <View>
-          <Text style={styles.label}>Email</Text>
+          <Text style={styles.label}>Your Email</Text>
           <TextInput
             value={email}
             onChangeText={setEmail}
@@ -67,7 +79,9 @@ const Login = () => {
 
         <View style={{ marginTop: 20 }}>
           <Pressable style={styles.loginBtn} onPress={handleLogin}>
-            <Text style={styles.loginBtnText}>Login</Text>
+            <Text style={styles.loginBtnText}>{isLoading ? "Loading" : "Login"}</Text>
+
+            {isLoading && <ActivityIndicator color="white" />}
           </Pressable>
         </View>
       </View>
@@ -81,7 +95,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    padding: 10,
+    padding: 16,
+    backgroundColor: "#ffffff",
   },
 
   label: {
@@ -100,6 +115,9 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
     padding: 12,
     alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 10,
   },
 
   loginBtnText: {

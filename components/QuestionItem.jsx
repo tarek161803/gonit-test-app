@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import React, { useContext, useState } from "react";
-import { Pressable, StyleSheet } from "react-native";
+import { Pressable } from "react-native";
 import { WebView } from "react-native-webview";
 import { UserContext } from "../context/UserContext";
 import useQuestionWithLatexAndImage from "../hooks/useQuestionWithLatexAndImage";
@@ -13,38 +13,83 @@ const renderHtml = (htmlContent) => {
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <style>
 
-        * {
-          box-sizing: border-box;
-          padding: 0;
-          margin: 0;
-        }
-
-        body {
-          margin: 0;
-          padding: 0;
-          background-color: transparent;
+      * {
+      box-sizing: border-box;
+      padding: 0;
+      margin: 0;
+      }
+      body {
           font-family: Arial, sans-serif;
-        }
-
-        p {
+      }
+      img {
+          display: inline-block;
+          vertical-align: middle;
+          height: 32px;
+          width: 32px;
+          object-fit: contain;
+          margin: 6px 0px;
+      }
+      p {
           line-height: 1.5;
-        }
-
-        table {
-          width: 100%;
+          color: #333333;
+      }
+      ul, ol {
+          padding: 0 1rem;
+          margin: 0.5rem;
+      }
+      strong {
+          font-weight: bold;
+      }
+      ul li p, ol li p {
+          margin-top: 0.25em;
+          margin-bottom: 0.25em;
+      }
+      ul {
+          list-style-type: disc;
+      }
+      ol {
+          list-style-type: upper-alpha;
+      }
+      ol ::marker {
+          font-weight: bold;
+      }
+      table {
           border-collapse: collapse;
           margin: 0;
-        }
-
-         th, td {
+          overflow: hidden;
+          table-layout: fixed;
+          width: 100%;
+      }
+      th, td {
           padding: 8px 8px;
-        }
-
-        .content {
-          display: block;
-          padding: 24px;
+      }
+      .separated-table {
+          border-spacing: 0px 3px;
+          border-collapse: separate;
+      }
+      table td, table th {
+          border: 1px solid #222;
+          box-sizing: border-box;
+          min-width: 1em;
+          padding: 4px 6px;
+          position: relative;
+          text-align: left;
+      }
+      table th {
+          background-color: #ddd;
+      }
+      .table-cell-no-border {
+          border: none;
+      }
+      .line-break {
+          margin: 8px 0;
+      }
+      .content {
+          background-color: #f3ebe5;
+          padding: 12px;
           border-radius: 12px;
-        }
+      }
+
       </style>
     </head>
     <body>
@@ -76,13 +121,10 @@ const QuestionItem = ({ question }) => {
         setQuestion(question);
         router.push(`/${question._id}`);
       }}
-      style={[
-        styles.questionContainer,
-        { height: webViewHeights[question._id] || 100 }, // Fallback height
-      ]}>
+      style={{ height: webViewHeights[question._id] || 100 }}>
       <WebView
         source={{
-          html: renderHtml(htmlContent),
+          html: renderHtml(htmlContent.replace(/<br>/g, "<div class='line-break'></div>")),
         }}
         injectedJavaScript={`
           (function() {
@@ -96,7 +138,7 @@ const QuestionItem = ({ question }) => {
         `}
         onMessage={(event) => handleWebViewMessage(event, question._id)}
         javaScriptEnabled={true}
-        style={[styles.webview, { height: webViewHeights[question._id] || 100 }]} // Adjust WebView height
+        style={{ height: webViewHeights[question._id] || 100 }} // Adjust WebView height
         scrollEnabled={false}
       />
     </Pressable>
@@ -104,15 +146,3 @@ const QuestionItem = ({ question }) => {
 };
 
 export default QuestionItem;
-
-const styles = StyleSheet.create({
-  questionContainer: {
-    borderRadius: 14,
-    overflow: "hidden",
-    backgroundColor: "#f3ebe5",
-  },
-  webview: {
-    flex: 1,
-    backgroundColor: "transparent",
-  },
-});

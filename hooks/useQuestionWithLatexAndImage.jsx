@@ -7,7 +7,7 @@ const useQuestionWithLatexAndImage = (question, images, latex = []) => {
       if (type === "img") {
         return `<img src="data:image/svg+xml;utf8,${encodeURIComponent(
           images[parsedIndex]
-        )}" alt="image-${parsedIndex}" style='height:40px' />`;
+        )}" alt="image-${parsedIndex}" />`;
       }
       if (type === "lat") {
         return latex[parsedIndex] || "";
