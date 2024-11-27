@@ -110,6 +110,10 @@ const Home = () => {
             {questions.length > 0 &&
               questions.map((question) => (
                 <View style={styles.questionItem} key={question._id}>
+                  <Text style={{ fontSize: 16, marginBottom: 6 }}>
+                    <Text style={{ fontWeight: "600" }}>S/N: </Text>
+                    {question.serial}
+                  </Text>
                   <QuestionItem question={question} />
                   <View style={styles.questionBadge}>
                     <Text style={styles.questionBadgeText}>{question.status}</Text>
@@ -184,17 +188,16 @@ const styles = StyleSheet.create({
 
   questionItem: {
     position: "relative",
-    backgroundColor: "#f8f8f8",
     marginVertical: 10,
   },
 
   questionBadge: {
     position: "absolute",
-    top: 6,
-    right: 6,
+    top: 10,
+    right: -4,
     paddingVertical: 4,
     paddingHorizontal: 8,
-    backgroundColor: "#ffffff",
+    backgroundColor: "#ececec",
     borderRadius: 6,
     elevation: 2,
   },

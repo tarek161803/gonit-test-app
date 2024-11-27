@@ -67,6 +67,10 @@ const AnswersSection = () => {
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={{ paddingHorizontal: 16, backgroundColor: "#ffffff", flexGrow: 1 }}>
         <View style={{ marginVertical: 12 }}>
+          <Text style={{ fontSize: 16, marginBottom: 6 }}>
+            <Text style={{ fontWeight: "600" }}>S/N: </Text>
+            {question.serial}
+          </Text>
           <QuestionItem question={question} />
         </View>
 
