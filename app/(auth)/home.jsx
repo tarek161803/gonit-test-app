@@ -16,7 +16,7 @@ import {
   View,
 } from "react-native";
 
-import QuestionItem from "../../components/QuestionItem";
+import { default as QuestionItem } from "../../components/QuestionItem";
 import { BASE_URL } from "../../constants/Utils";
 import { UserContext } from "../../context/UserContext";
 
@@ -99,22 +99,20 @@ const Home = () => {
           <ScrollView
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
             style={styles.questionsContainer}>
-            {questions.length ? (
-              questions.map((question) => (
-                <View style={styles.questionItem} key={question._id}>
-                  <Text style={styles.serialText}>
-                    <Text style={styles.serialLabel}>S/N: </Text>
-                    {question.serial}
-                  </Text>
-                  <QuestionItem question={question} />
-                  <View style={styles.questionBadge}>
-                    <Text style={styles.questionBadgeText}>{question.status}</Text>
+            {questions.length
+              ? questions.map((question) => (
+                  <View style={styles.questionItem} key={question._id}>
+                    <Text style={styles.serialText}>
+                      <Text style={styles.serialLabel}>S/N: </Text>
+                      {question.serial}
+                    </Text>
+                    <QuestionItem question={question} />
+                    <View style={styles.questionBadge}>
+                      <Text style={styles.questionBadgeText}>{question.status}</Text>
+                    </View>
                   </View>
-                </View>
-              ))
-            ) : (
-              <Text style={{ fontSize: 18 }}>No Questions Found!</Text>
-            )}
+                ))
+              : !refreshing && <Text style={{ fontSize: 20 }}>No Questions Found.</Text>}
           </ScrollView>
         </TouchableWithoutFeedback>
 
