@@ -30,7 +30,8 @@ const renderHtml = (htmlContent) => {
           margin: 6px 0px;
       }
       p {
-          line-height: 1.5;
+          font-size: 20px;
+          line-height: 1.3;
           color: #333333;
       }
       ul, ol {

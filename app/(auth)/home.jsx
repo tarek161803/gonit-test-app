@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -27,73 +27,58 @@ const Home = () => {
   const [inputPage, setInputPage] = useState(1);
   const [page, setPage] = useState(1);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const getQuestions = async () => {
-    setRefreshing(true);
-    try {
-      const response = await fetch(BASE_URL + `questions?page=${page}`, {
-        headers: {
-          Authorization: `Bearer ${user?.token}`,
-        },
-      });
-      const data = await response.json();
-      if (data.success) {
-        setQuestions(data.data);
-        setRefreshing(false);
-        setTotalPages(data.total_pages);
-      } else {
-        Alert.alert("Something Went Wrong!", "Please try again later.");
+  const fetchQuestions = useCallback(
+    async (query = "") => {
+      setRefreshing(true);
+      const url = BASE_URL + `questions?page=${page}${query && `&search=${query}`}`;
+      try {
+        const response = await fetch(url, {
+          headers: { Authorization: `Bearer ${user?.token}` },
+        });
+        const data = await response.json();
+        if (data.success) {
+          setQuestions(data.data);
+          setRefreshing(false);
+          setTotalPages(data.total_pages);
+        } else {
+          Alert.alert("Something Went Wrong!", "Please try again later.");
+          setRefreshing(false);
+        }
+      } catch {
+        Alert.alert("Error", "Failed to fetch questions.");
         setRefreshing(false);
       }
-    } catch {
-      Alert.alert("Error", "Failed to fetch questions.");
-      setRefreshing(false);
-    }
-  };
+    },
+    [page, user?.token, setTotalPages]
+  );
 
-  const handleRefresh = () => {
-    getQuestions();
-  };
+  const handleRefresh = () => fetchQuestions(searchQuery);
 
   const handlePageChange = () => {
     Keyboard.dismiss();
-    if (totalPages && inputPage > totalPages) {
-      Alert.alert("Invalid Page", `Please enter a valid full number less than or equal to ${totalPages}.`);
-      return;
-    }
-
-    if (!inputPage) {
-      return;
-    }
-
-    if (inputPage === page) {
-      return;
-    }
-
-    if (refreshing) {
-      return;
-    }
-
-    if (!Number.isInteger(+inputPage) || inputPage <= 0) {
-      Alert.alert("Invalid Page", "Please enter a valid full number greater than 0.");
-      return;
-    }
-
+    if (refreshing || !inputPage || inputPage === page || inputPage <= 0 || inputPage > totalPages) return;
     setPage(inputPage);
   };
 
-  useEffect(() => {
-    getQuestions();
-  }, [page]);
+  const handleSearch = () => {
+    Keyboard.dismiss();
+    setPage(1);
+    if (searchQuery) fetchQuestions(searchQuery);
+  };
 
   useEffect(() => {
-    const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
-      setKeyboardVisible(true);
-    });
-    const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
-      setKeyboardVisible(false);
-    });
+    if (!searchQuery) fetchQuestions();
+  }, [searchQuery]);
 
+  useEffect(() => {
+    fetchQuestions(searchQuery);
+  }, [page, fetchQuestions]);
+
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener("keyboardDidShow", () => setKeyboardVisible(true));
+    const hideSubscription = Keyboard.addListener("keyboardDidHide", () => setKeyboardVisible(false));
     return () => {
       showSubscription.remove();
       hideSubscription.remove();
@@ -103,15 +88,22 @@ const Home = () => {
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "height" : "padding"} style={{ flex: 1 }}>
+        <View style={styles.searchContainer}>
+          <TextInput onChangeText={setSearchQuery} placeholder="Question / Serial" style={styles.searchInput} />
+          <Pressable onPress={handleSearch} style={styles.searchButton}>
+            <Text style={styles.searchButtonText}>Search</Text>
+          </Pressable>
+        </View>
+
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()} accessible={false}>
           <ScrollView
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
             style={styles.questionsContainer}>
-            {questions.length > 0 &&
+            {questions.length ? (
               questions.map((question) => (
                 <View style={styles.questionItem} key={question._id}>
-                  <Text style={{ fontSize: 16, marginBottom: 6 }}>
-                    <Text style={{ fontWeight: "600" }}>S/N: </Text>
+                  <Text style={styles.serialText}>
+                    <Text style={styles.serialLabel}>S/N: </Text>
                     {question.serial}
                   </Text>
                   <QuestionItem question={question} />
@@ -119,18 +111,20 @@ const Home = () => {
                     <Text style={styles.questionBadgeText}>{question.status}</Text>
                   </View>
                 </View>
-              ))}
+              ))
+            ) : (
+              <Text style={{ fontSize: 18 }}>No Questions Found!</Text>
+            )}
           </ScrollView>
         </TouchableWithoutFeedback>
+
         <View
           style={[styles.pageSearchContainer, { marginBottom: keyboardVisible && Platform.OS === "ios" ? 100 : 0 }]}>
           <TextInput
             placeholder="Page"
-            value={String(inputPage)}
+            value={String(page)}
             onSubmitEditing={handlePageChange}
-            onChangeText={(value) => {
-              setInputPage(value);
-            }}
+            onChangeText={setInputPage}
             style={styles.pageInput}
             keyboardType="numeric"
           />
@@ -143,29 +137,14 @@ const Home = () => {
             )}
           </Pressable>
 
-          <View style={{ flexDirection: "row", gap: 12 }}>
-            <Pressable
-              style={styles.navigateButton}
-              onPress={() => {
-                if (refreshing) return;
-                if (+page > 1) {
-                  setPage(+page - 1);
-                  setInputPage(+page - 1);
-                }
-              }}>
-              <Text style={{ fontSize: 24 }}>{`<`}</Text>
+          <View style={styles.navigationButtons}>
+            <Pressable style={styles.navigateButton} onPress={() => !refreshing && page > 1 && setPage(page - 1)}>
+              <Text style={styles.navigateButtonText}>{"<"}</Text>
             </Pressable>
             <Pressable
               style={styles.navigateButton}
-              onPress={() => {
-                if (refreshing) return;
-
-                if (+page < +totalPages) {
-                  setPage(+page + 1);
-                  setInputPage(+page + 1);
-                }
-              }}>
-              <Text style={{ fontSize: 24 }}>{`>`}</Text>
+              onPress={() => !refreshing && page < totalPages && setPage(page + 1)}>
+              <Text style={styles.navigateButtonText}>{">"}</Text>
             </Pressable>
           </View>
         </View>
@@ -181,16 +160,42 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#ffffff",
   },
+  searchContainer: {
+    flexDirection: "row",
+    padding: 10,
+    gap: 8,
+  },
+  searchInput: {
+    flex: 1,
+    paddingHorizontal: 12,
+    backgroundColor: "#f3f3f3",
+    fontSize: 18,
+    borderRadius: 8,
+  },
+  searchButton: {
+    backgroundColor: "#22c55e",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  searchButtonText: {
+    color: "#ffffff",
+    fontSize: 16,
+  },
   questionsContainer: {
     flex: 1,
     padding: 10,
+    paddingTop: 0,
   },
-
   questionItem: {
     position: "relative",
     marginVertical: 10,
   },
-
+  serialText: {
+    fontSize: 16,
+    marginBottom: 6,
+  },
+  serialLabel: { fontWeight: "600" },
   questionBadge: {
     position: "absolute",
     top: 10,
@@ -201,27 +206,9 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     elevation: 2,
   },
-
-  questionBadgeText: {
-    fontSize: 14,
-    color: "#333",
-  },
-
-  pageSearchContainer: {
-    flexDirection: "row",
-    gap: 10,
-    alignItems: "center",
-    padding: 10,
-  },
-
-  pageInput: {
-    flex: 1,
-    borderWidth: 1,
-    borderRadius: 8,
-    height: 48,
-    paddingHorizontal: 8,
-  },
-
+  questionBadgeText: { fontSize: 14, color: "#333" },
+  pageSearchContainer: { flexDirection: "row", gap: 10, alignItems: "center", padding: 10 },
+  pageInput: { flex: 1, borderWidth: 1, borderRadius: 8, height: 48, paddingHorizontal: 8 },
   goButton: {
     backgroundColor: "#22c55e",
     height: 48,
@@ -230,13 +217,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 8,
   },
-
-  goButtonText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#ffffff",
-  },
-
+  goButtonText: { fontSize: 18, fontWeight: "bold", color: "#ffffff" },
+  navigationButtons: { flexDirection: "row", gap: 12 },
   navigateButton: {
     backgroundColor: "#e9e9e9",
     height: 48,
@@ -245,4 +227,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 8,
   },
+  navigateButtonText: { fontSize: 24 },
 });
