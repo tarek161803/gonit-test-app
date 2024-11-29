@@ -90,7 +90,7 @@ const Login = () => {
                 onChangeText={setPassword}
                 style={styles.input}
                 secureTextEntry
-                placeholder="12345678"
+                placeholder="Password"
               />
             </View>
             <View style={{ marginTop: 20 }}>

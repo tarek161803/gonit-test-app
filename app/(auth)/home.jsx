@@ -65,6 +65,7 @@ const Home = () => {
   const handleSearch = () => {
     Keyboard.dismiss();
     setPage(1);
+    setInputPage(1);
     if (searchQuery) fetchQuestions(searchQuery);
   };
 
@@ -120,13 +121,13 @@ const Home = () => {
           style={[styles.pageSearchContainer, { marginBottom: keyboardVisible && Platform.OS === "ios" ? 100 : 0 }]}>
           <TextInput
             placeholder="Page"
-            value={String(page)}
+            value={String(inputPage)}
             onSubmitEditing={handlePageChange}
             onChangeText={setInputPage}
             style={styles.pageInput}
             keyboardType="numeric"
           />
-          <Text>of {totalPages}</Text>
+          <Text style={{ flex: 1 }}>of {totalPages}</Text>
           <Pressable onPress={handlePageChange} style={styles.goButton}>
             {refreshing ? (
               <ActivityIndicator color="#ffffff" size="small" />
@@ -136,12 +137,20 @@ const Home = () => {
           </Pressable>
 
           <View style={styles.navigationButtons}>
-            <Pressable style={styles.navigateButton} onPress={() => !refreshing && page > 1 && setPage(page - 1)}>
+            <Pressable
+              style={styles.navigateButton}
+              onPress={() => {
+                !refreshing && page > 1 && setPage(+page - 1);
+                !refreshing && page > 1 && setInputPage(+page - 1);
+              }}>
               <Text style={styles.navigateButtonText}>{"<"}</Text>
             </Pressable>
             <Pressable
               style={styles.navigateButton}
-              onPress={() => !refreshing && page < totalPages && setPage(page + 1)}>
+              onPress={() => {
+                !refreshing && page < totalPages && setPage(+page + 1);
+                !refreshing && page < totalPages && setInputPage(+page + 1);
+              }}>
               <Text style={styles.navigateButtonText}>{">"}</Text>
             </Pressable>
           </View>
@@ -195,8 +204,9 @@ const styles = StyleSheet.create({
   },
   serialLabel: { fontWeight: "600" },
   questionBadge: {
+    flex: 1,
     position: "absolute",
-    top: 10,
+    top: 14,
     right: -4,
     paddingVertical: 4,
     paddingHorizontal: 8,
@@ -204,9 +214,26 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     elevation: 2,
   },
-  questionBadgeText: { fontSize: 14, color: "#333" },
-  pageSearchContainer: { flexDirection: "row", gap: 10, alignItems: "center", padding: 10 },
-  pageInput: { flex: 1, borderWidth: 1, borderRadius: 8, height: 48, paddingHorizontal: 8 },
+  questionBadgeText: {
+    flex: 1,
+    textTransform: "capitalize",
+    fontSize: 14,
+    color: "#333",
+  },
+  pageSearchContainer: {
+    width: "100%",
+    flexDirection: "row",
+    gap: 10,
+    alignItems: "center",
+    padding: 10,
+  },
+  pageInput: {
+    flex: 1,
+    borderWidth: 1,
+    borderRadius: 8,
+    height: 48,
+    paddingHorizontal: 8,
+  },
   goButton: {
     backgroundColor: "#22c55e",
     height: 48,
@@ -215,8 +242,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 8,
   },
-  goButtonText: { fontSize: 18, fontWeight: "bold", color: "#ffffff" },
-  navigationButtons: { flexDirection: "row", gap: 12 },
+  goButtonText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#ffffff",
+  },
+  navigationButtons: {
+    flexDirection: "row",
+    gap: 12,
+  },
   navigateButton: {
     backgroundColor: "#e9e9e9",
     height: 48,
