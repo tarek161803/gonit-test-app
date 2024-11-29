@@ -1,8 +1,20 @@
 import { useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useContext, useState } from "react";
-import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
-import COLORS from "../../constants/Colors";
+import {
+  ActivityIndicator,
+  Alert,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 import { BASE_URL } from "../../constants/Utils";
 import { UserContext } from "../../context/UserContext";
 
@@ -12,6 +24,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+
   const handleLogin = async () => {
     if (isLoading) return;
 
@@ -42,50 +55,53 @@ const Login = () => {
           token: data.token,
         });
         router.replace("home");
-        setIsLoading(false);
       } else {
         Alert.alert("Invalid Credentials!", "Please try again.");
-        setIsLoading(false);
       }
     } catch {
       Alert.alert("Something Went Wrong!", "Please try again later.");
+    } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <View>
-        <View>
-          <Text style={styles.label}>Your Email</Text>
-          <TextInput
-            value={email}
-            onChangeText={setEmail}
-            style={styles.input}
-            keyboardType="email-address"
-            placeholder="e.g yourmail@example.com"
-          />
-        </View>
-        <View style={{ marginTop: 20 }}>
-          <Text style={styles.label}>Password</Text>
-          <TextInput
-            value={password}
-            onChangeText={setPassword}
-            style={styles.input}
-            secureTextEntry
-            placeholder="12345678"
-          />
-        </View>
-
-        <View style={{ marginTop: 20 }}>
-          <Pressable style={styles.loginBtn} onPress={handleLogin}>
-            <Text style={styles.loginBtnText}>{isLoading ? "Loading" : "Login"}</Text>
-
-            {isLoading && <ActivityIndicator color="white" />}
-          </Pressable>
-        </View>
-      </View>
-    </View>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      style={{ flex: 1 }}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
+          <View style={styles.container}>
+            <View>
+              <Text style={styles.label}>Your Email</Text>
+              <TextInput
+                value={email}
+                onChangeText={setEmail}
+                style={styles.input}
+                keyboardType="email-address"
+                placeholder="e.g yourmail@example.com"
+              />
+            </View>
+            <View style={{ marginTop: 20 }}>
+              <Text style={styles.label}>Password</Text>
+              <TextInput
+                value={password}
+                onChangeText={setPassword}
+                style={styles.input}
+                secureTextEntry
+                placeholder="12345678"
+              />
+            </View>
+            <View style={{ marginTop: 20 }}>
+              <Pressable style={styles.loginBtn} onPress={handleLogin}>
+                {isLoading ? <ActivityIndicator color="white" /> : <Text style={styles.loginBtnText}>LOGIN</Text>}
+              </Pressable>
+            </View>
+          </View>
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -98,30 +114,30 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: "#ffffff",
   },
-
   label: {
-    marginBottom: 5,
+    marginBottom: 4,
     fontSize: 16,
   },
-
   input: {
     borderColor: "gray",
     borderWidth: 1,
-    padding: 8,
+    padding: 12,
+    paddingHorizontal: 10,
+    borderRadius: 8,
     fontSize: 16,
   },
-
   loginBtn: {
-    backgroundColor: COLORS.primary,
-    padding: 12,
+    backgroundColor: "#22c55e",
+    height: 50,
+    borderRadius: 8,
     alignItems: "center",
     flexDirection: "row",
     justifyContent: "center",
     gap: 10,
   },
-
   loginBtnText: {
     color: "white",
-    fontSize: 16,
+    fontSize: 18,
+    fontWeight: "600",
   },
 });
