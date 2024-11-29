@@ -17,6 +17,7 @@ import {
 } from "react-native";
 
 import { default as QuestionItem } from "../../components/QuestionItem";
+import COLORS from "../../constants/Colors";
 import { BASE_URL } from "../../constants/Utils";
 import { UserContext } from "../../context/UserContext";
 
@@ -180,7 +181,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   searchButton: {
-    backgroundColor: "#22c55e",
+    backgroundColor: COLORS.primary,
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 8,
@@ -235,7 +236,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   goButton: {
-    backgroundColor: "#22c55e",
+    backgroundColor: COLORS.primary,
     height: 48,
     width: 96,
     justifyContent: "center",

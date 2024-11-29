@@ -10,8 +10,8 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { SvgXml } from "react-native-svg";
-import QuestionItem from "../../components/QuestionItem";
+import SingleQuestion from "../../components/SingleQuestion";
+import COLORS from "../../constants/Colors";
 import { BASE_URL } from "../../constants/Utils";
 import { UserContext } from "../../context/UserContext";
 
@@ -126,17 +126,17 @@ const AnswersSection = () => {
         contentContainerStyle={{ paddingHorizontal: 16, backgroundColor: "#ffffff", flexGrow: 1 }}>
         <View style={{ marginVertical: 12 }}>
           <Text style={{ fontSize: 16, marginBottom: 6 }}>
-            <Text style={{ fontWeight: "600" }}>S/N: </Text>
+            <Text style={{ fontFamily: "DefaultBold" }}>S/N: </Text>
             {question.serial}
           </Text>
-          <QuestionItem question={question} />
+          <SingleQuestion question={question} />
         </View>
 
-        {question.image && (
+        {/* {question.image && (
           <View style={styles.mainImageContainer}>
-            <SvgXml xml={question.image} width="100%" height={200} />
+            <SvgXml xml={question.image} width="100%" />
           </View>
-        )}
+        )} */}
 
         {question.answerType === "multiple" ? (
           <View style={styles.container}>
@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
   mainImageContainer: {
     marginVertical: 10,
     padding: 10,
-    backgroundColor: "#f3f3f3",
+    backgroundColor: "#f8f8f8",
     alignItems: "center",
     borderRadius: 12,
     height: "auto",
@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   correctAnswer: {
-    backgroundColor: "#22c55e",
+    backgroundColor: COLORS.primary,
   },
   wrongAnswer: {
     backgroundColor: "#ef4444",
@@ -278,13 +278,13 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 16,
     borderRadius: 8,
-    backgroundColor: "#22c55e",
+    backgroundColor: COLORS.primary,
     alignItems: "center",
   },
 
   verifyButtonText: {
     color: "#ffffff",
     fontSize: 18,
-    fontWeight: "bold",
+    fontFamily: "DefaultRegular",
   },
 });

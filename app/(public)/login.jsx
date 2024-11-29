@@ -15,6 +15,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import COLORS from "../../constants/Colors";
 import { BASE_URL } from "../../constants/Utils";
 import { UserContext } from "../../context/UserContext";
 
@@ -127,8 +128,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   loginBtn: {
-    backgroundColor: "#22c55e",
-    height: 50,
+    backgroundColor: COLORS.primary,
     borderRadius: 8,
     alignItems: "center",
     flexDirection: "row",

@@ -5,7 +5,7 @@ import { WebView } from "react-native-webview";
 import { UserContext } from "../context/UserContext";
 import useQuestionWithLatexAndImage from "../hooks/useQuestionWithLatexAndImage";
 
-const renderHtml = (htmlContent) => {
+const renderHtml = (htmlContent, mainImage) => {
   return `
     <!DOCTYPE html>
     <html>
@@ -24,11 +24,11 @@ const renderHtml = (htmlContent) => {
       body {
            font-family: "Lato", sans-serif;
       }
-      img {
+     img {
           display: inline-block;
           vertical-align: middle;
-          height: 32px;
           width: 32px;
+          height: 32px;
           object-fit: contain;
           margin: 6px 0px;
       }
@@ -88,22 +88,30 @@ const renderHtml = (htmlContent) => {
       .line-break {
           height: 10px;
       }
-      .content {
-          background-color: #f3ebe5;
-          padding: 12px;
-          border-radius: 12px;
+     
+
+      .main-image-container{
+         margin-top: 20px;
+      }
+
+      .main-image{
+          width: 100%;
+          height: auto;
       }
 
       </style>
     </head>
     <body>
       <div class="content">${htmlContent}</div>
+      <div class='main-image-container'>
+      <img class='main-image' src="data:image/svg+xml;utf8,${encodeURIComponent(mainImage)}" alt="main-image" />
+      </div>
     </body>
     </html>
   `;
 };
 
-const QuestionItem = ({ question }) => {
+const SingleQuestion = ({ question }) => {
   const { setQuestion } = useContext(UserContext);
   const router = useRouter();
   const htmlContent = useQuestionWithLatexAndImage(question.question, question.images, question.latex);
@@ -128,7 +136,7 @@ const QuestionItem = ({ question }) => {
       style={{ height: webViewHeights[question._id] || 10 }}>
       <WebView
         source={{
-          html: renderHtml(htmlContent.replace(/<br>/g, "<div class='line-break'></div>")),
+          html: renderHtml(htmlContent.replace(/<br>/g, "<div class='line-break'></div>"), question.image),
         }}
         injectedJavaScript={`
           (function() {
@@ -149,4 +157,4 @@ const QuestionItem = ({ question }) => {
   );
 };
 
-export default QuestionItem;
+export default SingleQuestion;
