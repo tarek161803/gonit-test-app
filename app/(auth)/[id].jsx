@@ -167,21 +167,52 @@ const AnswersSection = () => {
           </View>
         )}
 
-        <Pressable onPress={handleVerify} style={styles.verifyButton}>
-          <Text style={styles.verifyButtonText}>
-            {isLoading
-              ? "Verifying..."
-              : question.status === "verified" || question.status === "published"
-              ? "Verified"
-              : "Verify Question"}
-          </Text>
-        </Pressable>
-        {user?.user?.role === "admin" && (
-          <Pressable onPress={handlePublish} style={styles.verifyButton}>
+        {user?.user?.role !== "admin" && question.status === "draft" ? (
+          <Pressable onPress={handleVerify} style={styles.verifyButton}>
             <Text style={styles.verifyButtonText}>
-              {publishing ? "Publishing..." : question.status === "published" ? "Published" : "Publish Question"}
+              {isLoading
+                ? "Verifying..."
+                : question.status === "verified" || question.status === "published"
+                ? "Verified"
+                : "Verify Question"}
             </Text>
           </Pressable>
+        ) : (
+          <>
+            {user?.user?.role !== "admin" ? (
+              <View style={styles.verifyButton}>
+                <Text style={styles.verifyButtonText}>
+                  {question.status === "verified"
+                    ? "Already Verified"
+                    : question.status === "published"
+                    ? "Already Published"
+                    : "Not Verified"}
+                </Text>
+              </View>
+            ) : null}
+          </>
+        )}
+
+        {user?.user?.role === "admin" && (
+          <>
+            {question.status === "draft" ? (
+              <Pressable onPress={handleVerify} style={styles.verifyButton}>
+                <Text style={styles.verifyButtonText}>
+                  {isLoading ? "Verifying..." : question.status === "verified" ? "Verified" : "Verify Question"}
+                </Text>
+              </Pressable>
+            ) : (
+              <Pressable onPress={handlePublish} style={styles.verifyButton}>
+                <Text style={styles.verifyButtonText}>
+                  {publishing
+                    ? "Publishing..."
+                    : question.status === "published"
+                    ? "Already Published"
+                    : "Publish Question"}
+                </Text>
+              </Pressable>
+            )}
+          </>
         )}
       </ScrollView>
     </SafeAreaView>
