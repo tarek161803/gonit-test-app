@@ -25,6 +25,7 @@ const AnswersSection = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
 
   const [answerStyle, setAnswerStyle] = useState(null);
   const [userAnswer, setUserAnswer] = useState(null);
@@ -123,6 +124,20 @@ const AnswersSection = () => {
     };
   }, [userAnswer, question.answer]);
 
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener("keyboardDidShow", () => {
+      setKeyboardVisible(true);
+    });
+    const keyboardDidHideListener = Keyboard.addListener("keyboardDidHide", () => {
+      setKeyboardVisible(false);
+    });
+
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FBF8F6" }}>
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "height" : "padding"} style={{ flex: 1 }}>
@@ -140,8 +155,8 @@ const AnswersSection = () => {
             </View>
           </ScrollView>
         </TouchableWithoutFeedback>
-        <View style={styles.container}>
-          {question.answerType === "input" ? (
+        <View style={[styles.container, { paddingBottom: Platform.OS === "ios" && keyboardVisible ? 110 : 0 }]}>
+          {question.answerType === "multiple" ? (
             <View>
               {question.wrongAnswers &&
                 answerOptions.map((option, index) => (
