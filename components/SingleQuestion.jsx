@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { View } from "react-native";
 import { WebView } from "react-native-webview";
 import useQuestionWithLatexAndImage from "../hooks/useQuestionWithLatexAndImage";
@@ -11,7 +11,7 @@ const renderHtml = (htmlContent, mainImage) => {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="viewport" content="width=device-width user-scalable=no">
       <style>
 
       * {
@@ -113,39 +113,32 @@ const renderHtml = (htmlContent, mainImage) => {
 
 const SingleQuestion = ({ question }) => {
   const htmlContent = useQuestionWithLatexAndImage(question.question, question.images, question.latex);
-  const [webViewHeights, setWebViewHeights] = useState({});
-
-  const handleWebViewMessage = (event, questionId) => {
+  const [webViewHeights, setWebViewHeights] = useState();
+  const webViewRef = useRef(null);
+  const handleWebViewMessage = (event) => {
     const height = parseInt(event.nativeEvent.data, 10);
     if (!isNaN(height)) {
-      setWebViewHeights((prev) => ({
-        ...prev,
-        [questionId]: height,
-      }));
+      setWebViewHeights(height);
     }
   };
 
+  const webViewScript =
+    "(function() {window.ReactNativeWebView.postMessage(document.documentElement.scrollHeight);})()";
+
   return (
-    <View style={{ flex: 1, height: webViewHeights[question._id] || 10 }}>
+    <View style={{ flex: 1, height: webViewHeights || 10 }}>
       <WebView
         source={{
           html: renderHtml(htmlContent.replace(/<br>/g, "<div class='line-break'></div>"), question.image),
         }}
-        injectedJavaScript={`
-          (function() {
-            const calculateHeight = () => {
-              const height = document.documentElement.scrollHeight;
-              window.ReactNativeWebView.postMessage(height.toString());
-            };
-            calculateHeight();
-            window.addEventListener('resize', calculateHeight);
-          })();
-        `}
-        onMessage={(event) => handleWebViewMessage(event, question._id)}
+        ref={webViewRef}
+        injectedJavaScript={webViewScript}
+        onMessage={(event) => handleWebViewMessage(event)}
         javaScriptEnabled={true}
-        style={{ height: webViewHeights[question._id] || 10 }} // Adjust WebView height
+        style={{ height: webViewHeights || 10 }}
         scrollEnabled={false}
         pointerEvents="none"
+        onLoadEnd={() => webViewRef.current.injectJavaScript(webViewScript)}
       />
     </View>
   );
