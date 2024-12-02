@@ -170,7 +170,8 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     flexDirection: "row",
-    padding: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
     gap: 8,
   },
   searchInput: {
@@ -192,7 +193,7 @@ const styles = StyleSheet.create({
   },
   questionsContainer: {
     flex: 1,
-    padding: 10,
+    padding: 16,
     paddingTop: 0,
   },
   questionItem: {
@@ -217,7 +218,6 @@ const styles = StyleSheet.create({
   },
   questionBadgeText: {
     flex: 1,
-    textTransform: "capitalize",
     fontSize: 14,
     color: "#333",
   },
@@ -226,7 +226,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 10,
     alignItems: "center",
-    padding: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
   },
   pageInput: {
     flex: 1,

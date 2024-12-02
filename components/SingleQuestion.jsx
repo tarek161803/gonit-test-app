@@ -1,8 +1,6 @@
-import { useRouter } from "expo-router";
-import React, { useContext, useState } from "react";
-import { Pressable } from "react-native";
+import React, { useState } from "react";
+import { View } from "react-native";
 import { WebView } from "react-native-webview";
-import { UserContext } from "../context/UserContext";
 import useQuestionWithLatexAndImage from "../hooks/useQuestionWithLatexAndImage";
 
 const renderHtml = (htmlContent, mainImage) => {
@@ -11,8 +9,8 @@ const renderHtml = (htmlContent, mainImage) => {
     <html>
     <head>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <style>
 
@@ -23,6 +21,7 @@ const renderHtml = (htmlContent, mainImage) => {
       }
       body {
            font-family: "Lato", sans-serif;
+           background-color: #FBF8F6;
       }
      img {
           display: inline-block;
@@ -106,14 +105,13 @@ const renderHtml = (htmlContent, mainImage) => {
       <div class='main-image-container'>
       <img class='main-image' src="data:image/svg+xml;utf8,${encodeURIComponent(mainImage)}" alt="main-image" />
       </div>
+      
     </body>
     </html>
   `;
 };
 
 const SingleQuestion = ({ question }) => {
-  const { setQuestion } = useContext(UserContext);
-  const router = useRouter();
   const htmlContent = useQuestionWithLatexAndImage(question.question, question.images, question.latex);
   const [webViewHeights, setWebViewHeights] = useState({});
 
@@ -128,12 +126,7 @@ const SingleQuestion = ({ question }) => {
   };
 
   return (
-    <Pressable
-      onPress={() => {
-        setQuestion(question);
-        router.push(`/${question._id}`);
-      }}
-      style={{ height: webViewHeights[question._id] || 10 }}>
+    <View style={{ flex: 1, height: webViewHeights[question._id] || 10 }}>
       <WebView
         source={{
           html: renderHtml(htmlContent.replace(/<br>/g, "<div class='line-break'></div>"), question.image),
@@ -152,8 +145,9 @@ const SingleQuestion = ({ question }) => {
         javaScriptEnabled={true}
         style={{ height: webViewHeights[question._id] || 10 }} // Adjust WebView height
         scrollEnabled={false}
+        pointerEvents="none"
       />
-    </Pressable>
+    </View>
   );
 };
 

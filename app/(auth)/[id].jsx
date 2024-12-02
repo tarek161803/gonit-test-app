@@ -1,6 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
 import {
   Alert,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
   Pressable,
   RefreshControl,
   SafeAreaView,
@@ -8,6 +11,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
 import SingleQuestion from "../../components/SingleQuestion";
@@ -120,101 +124,109 @@ const AnswersSection = () => {
   }, [userAnswer, question.answer]);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
-        contentContainerStyle={{ paddingHorizontal: 16, backgroundColor: "#ffffff", flexGrow: 1 }}>
-        <View style={{ marginVertical: 12 }}>
-          <Text style={{ fontSize: 16, marginBottom: 6 }}>
-            <Text style={{ fontFamily: "DefaultBold" }}>S/N: </Text>
-            {question.serial}
-          </Text>
-          <SingleQuestion question={question} />
-        </View>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#FBF8F6" }}>
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "height" : "padding"} style={{ flex: 1 }}>
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()} accessible={false}>
+          <ScrollView
+            keyboardShouldPersistTaps="handled"
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
+            contentContainerStyle={{ backgroundColor: "#FBF8F6", flexGrow: 1 }}>
+            <View style={{ flex: 1, marginVertical: 12, paddingHorizontal: 16 }}>
+              <Text style={{ fontSize: 16, marginBottom: 6 }}>
+                <Text style={{ fontFamily: "DefaultBold" }}>S/N: </Text>
+                {question.serial}
+              </Text>
+              <SingleQuestion question={question} />
+            </View>
+          </ScrollView>
+        </TouchableWithoutFeedback>
+        <View style={styles.container}>
+          {question.answerType === "input" ? (
+            <View>
+              {question.wrongAnswers &&
+                answerOptions.map((option, index) => (
+                  <Pressable
+                    key={index}
+                    onPress={() => handleCheckAnswer(option)}
+                    style={[styles.answerOption, userAnswer === option && answerStyle]}>
+                    <Text style={styles.answerText}>{option}</Text>
+                  </Pressable>
+                ))}
+            </View>
+          ) : (
+            <View>
+              <TextInput
+                onChangeText={setInputAnswer}
+                value={inputAnswer}
+                style={styles.input}
+                keyboardType={question.inputType === "number" ? "numeric" : "default"}
+                placeholder="Enter Answer Here"
+              />
+              <Pressable
+                onPress={() => handleCheckAnswer(inputAnswer)}
+                style={[styles.checkButton, userAnswer === inputAnswer && answerStyle]}>
+                <Text style={styles.checkButtonText}>Check Answer</Text>
+              </Pressable>
+            </View>
+          )}
 
-        {/* {question.image && (
-          <View style={styles.mainImageContainer}>
-            <SvgXml xml={question.image} width="100%" />
-          </View>
-        )} */}
-
-        {question.answerType === "multiple" ? (
-          <View style={styles.container}>
-            {question.wrongAnswers &&
-              answerOptions.map((option, index) => (
-                <Pressable
-                  key={index}
-                  onPress={() => handleCheckAnswer(option)}
-                  style={[styles.answerOption, userAnswer === option && answerStyle]}>
-                  <Text style={styles.answerText}>{option}</Text>
-                </Pressable>
-              ))}
-          </View>
-        ) : (
-          <View style={styles.container}>
-            <TextInput
-              onChangeText={setInputAnswer}
-              value={inputAnswer}
-              style={styles.input}
-              keyboardType={question.inputType === "number" ? "numeric" : "default"}
-              placeholder="Enter Answer Here"
-            />
-            <Pressable
-              onPress={() => handleCheckAnswer(inputAnswer)}
-              style={[styles.checkButton, userAnswer === inputAnswer && answerStyle]}>
-              <Text style={styles.checkButtonText}>Check Answer</Text>
-            </Pressable>
-          </View>
-        )}
-
-        {user?.user?.role !== "admin" && question.status === "draft" ? (
-          <Pressable onPress={handleVerify} style={styles.verifyButton}>
-            <Text style={styles.verifyButtonText}>
-              {isLoading
-                ? "Verifying..."
-                : question.status === "verified" || question.status === "published"
-                ? "Verified"
-                : "Verify Question"}
-            </Text>
-          </Pressable>
-        ) : (
-          <>
-            {user?.user?.role !== "admin" ? (
-              <View style={styles.verifyButton}>
+          <View style={{ marginTop: 12 }}>
+            {user?.user?.role !== "admin" && question.status === "draft" ? (
+              <Pressable
+                onPress={handleVerify}
+                style={[styles.verifyButton, { marginBottom: Platform.OS === "ios" ? 0 : 16 }]}>
                 <Text style={styles.verifyButtonText}>
-                  {question.status === "verified"
-                    ? "Already Verified"
-                    : question.status === "published"
-                    ? "Already Published"
-                    : "Not Verified"}
-                </Text>
-              </View>
-            ) : null}
-          </>
-        )}
-
-        {user?.user?.role === "admin" && (
-          <>
-            {question.status === "draft" ? (
-              <Pressable onPress={handleVerify} style={styles.verifyButton}>
-                <Text style={styles.verifyButtonText}>
-                  {isLoading ? "Verifying..." : question.status === "verified" ? "Verified" : "Verify Question"}
+                  {isLoading
+                    ? "Verifying..."
+                    : question.status === "verified" || question.status === "published"
+                    ? "Verified"
+                    : "Verify Question"}
                 </Text>
               </Pressable>
             ) : (
-              <Pressable onPress={handlePublish} style={styles.verifyButton}>
-                <Text style={styles.verifyButtonText}>
-                  {publishing
-                    ? "Publishing..."
-                    : question.status === "published"
-                    ? "Already Published"
-                    : "Publish Question"}
-                </Text>
-              </Pressable>
+              <>
+                {user?.user?.role !== "admin" ? (
+                  <View style={[styles.verifyButton, { marginBottom: Platform.OS === "ios" ? 0 : 16 }]}>
+                    <Text style={styles.verifyButtonText}>
+                      {question.status === "verified"
+                        ? "Already Verified"
+                        : question.status === "published"
+                        ? "Already Published"
+                        : "Not Verified"}
+                    </Text>
+                  </View>
+                ) : null}
+              </>
             )}
-          </>
-        )}
-      </ScrollView>
+
+            {user?.user?.role === "admin" && (
+              <>
+                {question.status === "draft" ? (
+                  <Pressable
+                    onPress={handleVerify}
+                    style={[styles.verifyButton, { marginBottom: Platform.OS === "ios" ? 0 : 16 }]}>
+                    <Text style={styles.verifyButtonText}>
+                      {isLoading ? "Verifying..." : question.status === "verified" ? "Verified" : "Verify Question"}
+                    </Text>
+                  </Pressable>
+                ) : (
+                  <Pressable
+                    onPress={handlePublish}
+                    style={[styles.verifyButton, { marginBottom: Platform.OS === "ios" ? 0 : 16 }]}>
+                    <Text style={styles.verifyButtonText}>
+                      {publishing
+                        ? "Publishing..."
+                        : question.status === "published"
+                        ? "Already Published"
+                        : "Publish Question"}
+                    </Text>
+                  </Pressable>
+                )}
+              </>
+            )}
+          </View>
+        </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
@@ -223,8 +235,8 @@ export default AnswersSection;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    marginBottom: 16,
+    paddingHorizontal: 16,
+    paddingTop: 12,
   },
   mainImageContainer: {
     marginVertical: 10,
@@ -235,13 +247,17 @@ const styles = StyleSheet.create({
     height: "auto",
   },
   answerOption: {
-    marginVertical: 5,
+    marginVertical: 8,
     padding: 12,
-    borderRadius: 8,
-    backgroundColor: "#f8f8f8",
+    borderRadius: 12,
+    backgroundColor: "#ffffff",
     alignItems: "center",
     justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "#D8D7D6",
+    boxShadow: "0 5 0 0 #D8D7D6",
   },
+
   answerText: {
     fontSize: 18,
     color: "#333",
@@ -258,25 +274,27 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     borderRadius: 8,
     backgroundColor: "#ffffff",
-    borderColor: "#ccc",
+    borderColor: "#D8D7D6",
     borderWidth: 1,
   },
   checkButton: {
     padding: 12,
     marginVertical: 5,
     borderRadius: 8,
-    backgroundColor: "#555",
+    backgroundColor: "#ffffff",
     alignItems: "center",
+    borderColor: "#D8D7D6",
+    borderWidth: 1,
+    boxShadow: "0 5 0 0 #D8D7D6",
   },
   checkButtonText: {
-    color: "#ffffff",
+    color: "#333333",
     fontSize: 16,
     fontWeight: "bold",
   },
 
   verifyButton: {
     padding: 16,
-    marginBottom: 16,
     borderRadius: 8,
     backgroundColor: COLORS.primary,
     alignItems: "center",
