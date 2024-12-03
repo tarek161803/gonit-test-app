@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import {
   Alert,
+  Dimensions,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -138,6 +139,54 @@ const AnswersSection = () => {
     };
   }, []);
 
+  const { width } = Dimensions.get("window");
+
+  const renderOptions = () => {
+    if (answerOptions.every((option) => option.length === 1)) {
+      return (
+        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 20, marginBottom: 20 }}>
+          {answerOptions.map((option, index) => (
+            <Pressable
+              key={index}
+              onPress={() => handleCheckAnswer(option)}
+              style={[styles.answerOption, userAnswer === option && answerStyle, { flex: 1 }]}>
+              <Text style={styles.answerText}>{option}</Text>
+            </Pressable>
+          ))}
+        </View>
+      );
+    }
+
+    if (answerOptions.every((option) => option.length > 1 && option.length < 6)) {
+      return (
+        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 20, marginBottom: 20 }}>
+          {answerOptions.map((option, index) => (
+            <Pressable
+              key={index}
+              onPress={() => handleCheckAnswer(option)}
+              style={[styles.answerOption, userAnswer === option && answerStyle, { width: (width - 52) / 2 }]}>
+              <Text style={styles.answerText}>{option}</Text>
+            </Pressable>
+          ))}
+        </View>
+      );
+    }
+
+    return (
+      <View style={{ gap: 20, marginBottom: 10, marginTop: 10 }}>
+        {question.wrongAnswers &&
+          answerOptions.map((option, index) => (
+            <Pressable
+              key={index}
+              onPress={() => handleCheckAnswer(option)}
+              style={[styles.answerOption, userAnswer === option && answerStyle]}>
+              <Text style={styles.answerText}>{option}</Text>
+            </Pressable>
+          ))}
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#FBF8F6" }}>
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "height" : "padding"} style={{ flex: 1 }}>
@@ -157,17 +206,7 @@ const AnswersSection = () => {
         </TouchableWithoutFeedback>
         <View style={[styles.container, { paddingBottom: Platform.OS === "ios" && keyboardVisible ? 110 : 0 }]}>
           {question.answerType === "multiple" ? (
-            <View>
-              {question.wrongAnswers &&
-                answerOptions.map((option, index) => (
-                  <Pressable
-                    key={index}
-                    onPress={() => handleCheckAnswer(option)}
-                    style={[styles.answerOption, userAnswer === option && answerStyle]}>
-                    <Text style={styles.answerText}>{option}</Text>
-                  </Pressable>
-                ))}
-            </View>
+            renderOptions(answerOptions)
           ) : (
             <View>
               <TextInput
@@ -252,18 +291,11 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
     paddingTop: 12,
+    boxShadow: "0 -5 10  #0000001d",
   },
-  mainImageContainer: {
-    marginVertical: 10,
-    padding: 10,
-    backgroundColor: "#f8f8f8",
-    alignItems: "center",
-    borderRadius: 12,
-    height: "auto",
-  },
+
   answerOption: {
-    marginVertical: 8,
-    padding: 12,
+    padding: 8,
     borderRadius: 12,
     backgroundColor: "#ffffff",
     alignItems: "center",
@@ -274,7 +306,7 @@ const styles = StyleSheet.create({
   },
 
   answerText: {
-    fontSize: 18,
+    fontSize: 24,
     color: "#333",
     fontWeight: "bold",
   },

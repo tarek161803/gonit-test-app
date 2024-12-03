@@ -89,7 +89,7 @@ const renderHtml = (htmlContent) => {
           height: 10px;
       }
       .content {
-          background-color: #f3ebe5;
+          background-color: #FBF8F6;
           padding: 12px;
           border-radius: 12px;
       }
