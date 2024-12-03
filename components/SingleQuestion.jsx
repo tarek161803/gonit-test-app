@@ -22,6 +22,7 @@ const renderHtml = (htmlContent, mainImage) => {
       body {
            font-family: "Lato", sans-serif;
            background-color: #FBF8F6;
+           
       }
      img {
           display: inline-block;
@@ -96,17 +97,20 @@ const renderHtml = (htmlContent, mainImage) => {
       .main-image{
           width: 100%;
           height: auto;
+          padding-inline: 2px;
       }
 
       </style>
     </head>
-    <body>
-      <div class="content">${htmlContent}</div>
-      <div class='main-image-container'>
-      <img class='main-image' src="data:image/svg+xml;utf8,${encodeURIComponent(mainImage)}" alt="main-image" />
-      </div>
-      
-    </body>
+      <body>
+        <div class="content">${htmlContent}</div>
+        <div class="main-image-container">
+          ${
+            mainImage &&
+            `<img class="main-image" src="data:image/svg+xml;utf8,${encodeURIComponent(mainImage)}" alt="main-image" />`
+          }
+        </div>
+      </body>
     </html>
   `;
 };

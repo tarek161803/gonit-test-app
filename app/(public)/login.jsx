@@ -130,6 +130,7 @@ const styles = StyleSheet.create({
   loginBtn: {
     backgroundColor: COLORS.primary,
     borderRadius: 8,
+    paddingVertical: 14,
     alignItems: "center",
     flexDirection: "row",
     justifyContent: "center",

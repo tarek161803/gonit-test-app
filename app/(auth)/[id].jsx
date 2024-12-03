@@ -142,7 +142,7 @@ const AnswersSection = () => {
   const { width } = Dimensions.get("window");
 
   const renderOptions = () => {
-    if (answerOptions.every((option) => option.length === 1)) {
+    if (answerOptions.every((option) => option.length === 2)) {
       return (
         <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 20, marginBottom: 20 }}>
           {answerOptions.map((option, index) => (
@@ -157,32 +157,32 @@ const AnswersSection = () => {
       );
     }
 
-    if (answerOptions.every((option) => option.length > 1 && option.length < 6)) {
+    if (answerOptions.some((option) => option.length > 5)) {
       return (
-        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 20, marginBottom: 20 }}>
-          {answerOptions.map((option, index) => (
-            <Pressable
-              key={index}
-              onPress={() => handleCheckAnswer(option)}
-              style={[styles.answerOption, userAnswer === option && answerStyle, { width: (width - 52) / 2 }]}>
-              <Text style={styles.answerText}>{option}</Text>
-            </Pressable>
-          ))}
+        <View style={{ gap: 20, marginBottom: 10, marginTop: 10 }}>
+          {question.wrongAnswers &&
+            answerOptions.map((option, index) => (
+              <Pressable
+                key={index}
+                onPress={() => handleCheckAnswer(option)}
+                style={[styles.answerOption, userAnswer === option && answerStyle]}>
+                <Text style={styles.answerText}>{option}</Text>
+              </Pressable>
+            ))}
         </View>
       );
     }
 
     return (
-      <View style={{ gap: 20, marginBottom: 10, marginTop: 10 }}>
-        {question.wrongAnswers &&
-          answerOptions.map((option, index) => (
-            <Pressable
-              key={index}
-              onPress={() => handleCheckAnswer(option)}
-              style={[styles.answerOption, userAnswer === option && answerStyle]}>
-              <Text style={styles.answerText}>{option}</Text>
-            </Pressable>
-          ))}
+      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 20, marginBottom: 20 }}>
+        {answerOptions.map((option, index) => (
+          <Pressable
+            key={index}
+            onPress={() => handleCheckAnswer(option)}
+            style={[styles.answerOption, userAnswer === option && answerStyle, { width: (width - 52) / 2 }]}>
+            <Text style={styles.answerText}>{option}</Text>
+          </Pressable>
+        ))}
       </View>
     );
   };
@@ -312,9 +312,13 @@ const styles = StyleSheet.create({
   },
   correctAnswer: {
     backgroundColor: COLORS.primary,
+    boxShadow: "0 5 0 0 #1a9b49",
+    borderColor: "#1a9b49",
   },
   wrongAnswer: {
-    backgroundColor: "#ef4444",
+    backgroundColor: "#FF4B4C",
+    boxShadow: "0 5 0 0 #E12C2E",
+    borderColor: "#FF4B4C",
   },
   input: {
     padding: 12,
