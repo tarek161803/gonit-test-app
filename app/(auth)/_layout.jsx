@@ -1,20 +1,21 @@
 import { Stack, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
-import React, { useContext } from "react";
+import React from "react";
 import { Alert, Pressable, Text } from "react-native";
-import { UserContext } from "../../context/UserContext";
+import { useDispatch } from "react-redux";
+import { setUserInfo } from "../../redux/slices/auth/authSlice";
 
 const AuthLayout = () => {
-  const { setUser } = useContext(UserContext);
+  const dispatch = useDispatch();
   const router = useRouter();
 
   const handleLogout = async () => {
     await SecureStore.deleteItemAsync("user");
     await SecureStore.deleteItemAsync("token");
-    setUser(null);
+    dispatch(setUserInfo(null));
     router.replace("login");
   };
-  const logoutAlert = () =>
+  const logoutAlert = () => {
     Alert.alert("Confirm Logout", "Are you sure you want to log out?", [
       {
         text: "Cancel",
@@ -25,6 +26,7 @@ const AuthLayout = () => {
         onPress: () => handleLogout(),
       },
     ]);
+  };
 
   return (
     <Stack>

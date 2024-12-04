@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -15,46 +15,30 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import { useDispatch } from "react-redux";
 import COLORS from "../../constants/Colors";
-import { BASE_URL } from "../../constants/Utils";
-import { UserContext } from "../../context/UserContext";
+import { useLoginMutation } from "../../redux/slices/auth/authApi";
+import { setUserInfo } from "../../redux/slices/auth/authSlice";
 
 const Login = () => {
-  const { setUser } = useContext(UserContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const [loginUser, { isLoading }] = useLoginMutation();
+  const dispatch = useDispatch();
 
   const handleLogin = async () => {
-    if (isLoading) return;
-
     if (!email || !password) {
       Alert.alert("Invalid Credentials!", "Please fill in all fields.");
       return;
     }
 
-    setIsLoading(true);
     try {
-      const response = await fetch(BASE_URL + "/auth/login", {
-        method: "POST",
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-        },
-      });
-
-      const data = await response.json();
-      if (data.status === "success") {
-        await SecureStore.setItemAsync("user", JSON.stringify(data.user));
-        await SecureStore.setItemAsync("token", data.token);
-        setUser({
-          user: data.user,
-          token: data.token,
-        });
+      const response = await loginUser({ email, password }).unwrap();
+      if (response.status === "success") {
+        await SecureStore.setItemAsync("user", JSON.stringify(response.user));
+        await SecureStore.setItemAsync("token", response.token);
+        dispatch(setUserInfo({ user: response.user, token: response.token }));
         router.replace("home");
       } else {
         Alert.alert("Invalid Credentials!", "Please try again.");
@@ -62,7 +46,8 @@ const Login = () => {
     } catch {
       Alert.alert("Something Went Wrong!", "Please try again later.");
     } finally {
-      setIsLoading(false);
+      setEmail("");
+      setPassword("");
     }
   };
 
@@ -130,7 +115,7 @@ const styles = StyleSheet.create({
   loginBtn: {
     backgroundColor: COLORS.primary,
     borderRadius: 8,
-    paddingVertical: 14,
+    height: 50,
     alignItems: "center",
     flexDirection: "row",
     justifyContent: "center",

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   Dimensions,
@@ -15,18 +15,23 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 import SingleQuestion from "../../components/SingleQuestion";
 import COLORS from "../../constants/Colors";
-import { BASE_URL } from "../../constants/Utils";
-import { UserContext } from "../../context/UserContext";
+
+import { useUpdateQuestionMutation } from "../../redux/slices/question/questionApi";
+import { setQuestion } from "../../redux/slices/question/questionSlice";
 
 const AnswersSection = () => {
-  const { question, user, setQuestion } = useContext(UserContext);
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+  const { question } = useSelector((state) => state.question);
   const answerOptions = [...question.wrongAnswers, question.answer].sort();
-  const [isLoading, setIsLoading] = useState(false);
-  const [publishing, setPublishing] = useState(false);
+
   const [refreshing, setRefreshing] = useState(false);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const [verifyQuestion, { isLoading }] = useUpdateQuestionMutation();
+  const [publishQuestion, { isLoading: publishing }] = useUpdateQuestionMutation();
 
   const [answerStyle, setAnswerStyle] = useState(null);
   const [userAnswer, setUserAnswer] = useState(null);
@@ -41,23 +46,12 @@ const AnswersSection = () => {
       return;
     }
 
-    setIsLoading(true);
-    const response = await fetch(BASE_URL + `questions/${question._id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`,
-      },
-      body: JSON.stringify({ status: "verified" }),
-    });
+    const response = await verifyQuestion({ id: question._id, body: { status: "verified" } }).unwrap();
 
-    const data = await response.json();
-    if (data.success) {
-      setQuestion(data.data);
-      setIsLoading(false);
+    if (response.success) {
+      dispatch(setQuestion(response.data));
     } else {
       Alert.alert("Error", "Failed to Verify Question.");
-      setIsLoading(false);
     }
   };
 
@@ -65,31 +59,19 @@ const AnswersSection = () => {
     if (question.status === "published") {
       return;
     }
+    const response = await publishQuestion({ id: question._id, body: { status: "published" } }).unwrap();
 
-    setPublishing(true);
-    const response = await fetch(BASE_URL + `questions/${question._id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`,
-      },
-      body: JSON.stringify({ status: "published" }),
-    });
-
-    const data = await response.json();
-    if (data.success) {
-      setQuestion(data.data);
-      setPublishing(false);
+    if (response.success) {
+      setQuestion(response.data);
     } else {
       Alert.alert("Error", "Failed to Publish Question.");
-      setPublishing(false);
     }
   };
 
   const handleRefresh = async () => {
     try {
       setRefreshing(true);
-      const response = await fetch(BASE_URL + `questions/${question._id}`, {
+      const response = await fetch("" + `questions/${question._id}`, {
         headers: {
           Authorization: `Bearer ${user?.token}`,
         },
@@ -142,7 +124,7 @@ const AnswersSection = () => {
   const { width } = Dimensions.get("window");
 
   const renderOptions = () => {
-    if (answerOptions.every((option) => option.length === 2)) {
+    if (answerOptions.every((option) => option.length === 1)) {
       return (
         <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 20, marginBottom: 20 }}>
           {answerOptions.map((option, index) => (

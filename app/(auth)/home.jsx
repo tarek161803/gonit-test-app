@@ -1,7 +1,7 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -16,67 +16,40 @@ import {
   View,
 } from "react-native";
 
+import { useDispatch, useSelector } from "react-redux";
 import { default as QuestionItem } from "../../components/QuestionItem";
 import COLORS from "../../constants/Colors";
-import { BASE_URL } from "../../constants/Utils";
-import { UserContext } from "../../context/UserContext";
+import { useGetQuestionsQuery } from "../../redux/slices/question/questionApi";
+import { updateQuestionQuery } from "../../redux/slices/question/questionSlice";
+import { buildQuery } from "../../utils/utils";
 
 const Home = () => {
-  const { user, setTotalPages, totalPages } = useContext(UserContext);
-  const [questions, setQuestions] = useState([]);
-  const [refreshing, setRefreshing] = useState(false);
+  const dispatch = useDispatch();
   const [inputPage, setInputPage] = useState(1);
-  const [page, setPage] = useState(1);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+  const { query } = useSelector((state) => state.question);
+  const { data, isLoading, refetch, isFetching } = useGetQuestionsQuery(buildQuery(query));
   const [searchQuery, setSearchQuery] = useState("");
-
-  const fetchQuestions = useCallback(
-    async (query = "") => {
-      setRefreshing(true);
-      const url = BASE_URL + `questions?page=${page}${query && `&search=${query}`}`;
-      try {
-        const response = await fetch(url, {
-          headers: { Authorization: `Bearer ${user?.token}` },
-        });
-        const data = await response.json();
-        if (data.success) {
-          setQuestions(data.data);
-          setRefreshing(false);
-          setTotalPages(data.total_pages);
-        } else {
-          Alert.alert("Something Went Wrong!", "Please try again later.");
-          setRefreshing(false);
-        }
-      } catch {
-        Alert.alert("Error", "Failed to fetch questions.");
-        setRefreshing(false);
-      }
-    },
-    [page, user?.token, setTotalPages]
-  );
-
-  const handleRefresh = () => fetchQuestions(searchQuery);
+  const handleRefresh = () => refetch();
 
   const handlePageChange = () => {
     Keyboard.dismiss();
-    if (refreshing || !inputPage || inputPage === page || inputPage <= 0 || inputPage > totalPages) return;
-    setPage(inputPage);
+    if (isLoading || !inputPage || inputPage === query.page || inputPage <= 0 || inputPage > data?.total_pages) return;
+    dispatch(updateQuestionQuery({ page: inputPage }));
   };
 
   const handleSearch = () => {
     Keyboard.dismiss();
-    setPage(1);
+    dispatch(updateQuestionQuery({ page: 1, search: searchQuery }));
     setInputPage(1);
-    if (searchQuery) fetchQuestions(searchQuery);
   };
 
   useEffect(() => {
-    if (!searchQuery) fetchQuestions();
+    if (searchQuery === "") {
+      dispatch(updateQuestionQuery({ search: searchQuery }));
+    }
   }, [searchQuery]);
-
-  useEffect(() => {
-    fetchQuestions(searchQuery);
-  }, [page, fetchQuestions]);
 
   useEffect(() => {
     const showSubscription = Keyboard.addListener("keyboardDidShow", () => setKeyboardVisible(true));
@@ -87,11 +60,18 @@ const Home = () => {
     };
   }, []);
 
+  if (isLoading || isFetching) return <ActivityIndicator color={COLORS.primary} size="large" style={{ flex: 1 }} />;
+
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "height" : "padding"} style={{ flex: 1 }}>
         <View style={styles.searchContainer}>
-          <TextInput onChangeText={setSearchQuery} placeholder="Question / Serial" style={styles.searchInput} />
+          <TextInput
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholder="Question / Serial"
+            style={styles.searchInput}
+          />
           <Pressable onPress={handleSearch} style={styles.searchButton}>
             <Text style={styles.searchButtonText}>Search</Text>
           </Pressable>
@@ -99,10 +79,10 @@ const Home = () => {
 
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()} accessible={false}>
           <ScrollView
-            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
+            refreshControl={<RefreshControl refreshing={isLoading} onRefresh={handleRefresh} />}
             style={styles.questionsContainer}>
-            {questions.length
-              ? questions.map((question) => (
+            {data?.data?.length
+              ? data?.data?.map((question) => (
                   <View style={styles.questionItem} key={question._id}>
                     <Text style={styles.serialText}>
                       <Text style={styles.serialLabel}>S/N: </Text>
@@ -114,12 +94,23 @@ const Home = () => {
                     </View>
                   </View>
                 ))
-              : !refreshing && <Text style={{ fontSize: 20 }}>No Questions Found.</Text>}
+              : !isLoading && <Text style={{ fontSize: 20 }}>No Questions Found.</Text>}
           </ScrollView>
         </TouchableWithoutFeedback>
 
         <View
           style={[styles.pageSearchContainer, { marginBottom: keyboardVisible && Platform.OS === "ios" ? 100 : 0 }]}>
+          <Pressable
+            onPress={() => {
+              dispatch(updateQuestionQuery({ sort: query.sort === "desc" ? "asc" : "desc" }));
+            }}
+            style={styles.sortButton}>
+            {query.sort === "desc" ? (
+              <MaterialCommunityIcons name="sort-calendar-descending" size={28} color="#121212" />
+            ) : (
+              <MaterialCommunityIcons name="sort-calendar-ascending" size={28} color="#121212" />
+            )}
+          </Pressable>
           <TextInput
             placeholder="Page"
             value={String(inputPage)}
@@ -128,9 +119,9 @@ const Home = () => {
             style={styles.pageInput}
             keyboardType="numeric"
           />
-          <Text style={{ flex: 1 }}>of {totalPages}</Text>
+          <Text style={{ flex: 1 }}>of {data?.total_pages}</Text>
           <Pressable onPress={handlePageChange} style={styles.goButton}>
-            {refreshing ? (
+            {isLoading ? (
               <ActivityIndicator color="#ffffff" size="small" />
             ) : (
               <Text style={styles.goButtonText}>Go</Text>
@@ -141,16 +132,18 @@ const Home = () => {
             <Pressable
               style={styles.navigateButton}
               onPress={() => {
-                !refreshing && page > 1 && setPage(+page - 1);
-                !refreshing && page > 1 && setInputPage(+page - 1);
+                !isLoading && query.page > 1 && dispatch(updateQuestionQuery({ page: +query.page - 1 }));
+                !isLoading && query.page > 1 && setInputPage(+query.page - 1);
               }}>
               <Text style={styles.navigateButtonText}>{"<"}</Text>
             </Pressable>
             <Pressable
               style={styles.navigateButton}
               onPress={() => {
-                !refreshing && page < totalPages && setPage(+page + 1);
-                !refreshing && page < totalPages && setInputPage(+page + 1);
+                !isLoading &&
+                  query.page < data?.total_pages &&
+                  dispatch(updateQuestionQuery({ page: +query.page + 1 }));
+                !isLoading && query.page < data?.total_pages && setInputPage(+query.page + 1);
               }}>
               <Text style={styles.navigateButtonText}>{">"}</Text>
             </Pressable>
@@ -239,7 +232,7 @@ const styles = StyleSheet.create({
   goButton: {
     backgroundColor: COLORS.primary,
     height: 48,
-    width: 96,
+    width: 72,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 8,
@@ -262,4 +255,13 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   navigateButtonText: { fontSize: 24 },
+
+  sortButton: {
+    backgroundColor: "#e9e9e9",
+    height: 48,
+    width: 48,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 8,
+  },
 });

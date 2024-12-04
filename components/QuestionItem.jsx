@@ -1,9 +1,10 @@
 import { useRouter } from "expo-router";
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { Pressable } from "react-native";
 import { WebView } from "react-native-webview";
-import { UserContext } from "../context/UserContext";
+import { useDispatch } from "react-redux";
 import useQuestionWithLatexAndImage from "../hooks/useQuestionWithLatexAndImage";
+import { setQuestion } from "../redux/slices/question/questionSlice";
 
 const renderHtml = (htmlContent) => {
   return `
@@ -104,8 +105,8 @@ const renderHtml = (htmlContent) => {
 };
 
 const QuestionItem = ({ question }) => {
-  const { setQuestion } = useContext(UserContext);
   const router = useRouter();
+  const dispatch = useDispatch();
   const htmlContent = useQuestionWithLatexAndImage(question.question, question.images, question.latex);
   const [webViewHeights, setWebViewHeights] = useState({});
 
@@ -122,7 +123,7 @@ const QuestionItem = ({ question }) => {
   return (
     <Pressable
       onPress={() => {
-        setQuestion(question);
+        dispatch(setQuestion(question));
         router.push(`/${question._id}`);
       }}
       style={{ height: webViewHeights[question._id] || 10 }}>
