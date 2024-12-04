@@ -17,6 +17,7 @@ import {
 } from "react-native";
 
 import { useDispatch, useSelector } from "react-redux";
+import QuestionFilter from "../../components/QuestionFilter";
 import { default as QuestionItem } from "../../components/QuestionItem";
 import COLORS from "../../constants/Colors";
 import { useGetQuestionsQuery } from "../../redux/slices/question/questionApi";
@@ -76,6 +77,8 @@ const Home = () => {
             <Text style={styles.searchButtonText}>Search</Text>
           </Pressable>
         </View>
+
+        <QuestionFilter />
 
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()} accessible={false}>
           <ScrollView
@@ -226,7 +229,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderWidth: 1,
     borderRadius: 8,
-    height: 48,
+    height: 46,
     paddingHorizontal: 8,
   },
   goButton: {
