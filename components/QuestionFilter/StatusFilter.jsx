@@ -37,7 +37,7 @@ const StatusFilter = () => {
       placeholder="Select Status"
       value={query.status}
       onChange={(item) => {
-        dispatch(updateQuestionQuery({ status: item.value }));
+        dispatch(updateQuestionQuery({ status: item.value, page: 1 }));
       }}
       renderItem={renderItem}
     />

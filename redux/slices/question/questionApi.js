@@ -4,7 +4,6 @@ const questionApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getQuestions: builder.query({
       query: (query) => `questions${query}`,
-      providesTags: ["Question"],
     }),
 
     getQuestionById: builder.query({
@@ -17,7 +16,6 @@ const questionApi = apiSlice.injectEndpoints({
         method: "PATCH",
         body,
       }),
-      invalidatesTags: ["Question"],
     }),
   }),
 });

@@ -48,7 +48,7 @@ const CategoryFilter = () => {
       placeholder="Select Status"
       value={query.category}
       onChange={(item) => {
-        dispatch(updateQuestionQuery({ category: item._id }));
+        dispatch(updateQuestionQuery({ category: item._id, page: 1 }));
       }}
       renderItem={renderItem}
     />

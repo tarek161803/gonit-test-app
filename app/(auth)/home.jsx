@@ -67,6 +67,17 @@ const Home = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (data?.total_pages && query.page > data?.total_pages) {
+      dispatch(updateQuestionQuery({ page: 1 }));
+    }
+    if (data?.total_pages === 0) {
+      setInputPage(0);
+    } else {
+      setInputPage(query.page);
+    }
+  }, [data]);
+
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "height" : "padding"} style={{ flex: 1 }}>
