@@ -22,6 +22,7 @@ const renderHtml = (htmlContent, mainImage) => {
       body {
            font-family: "Lato", sans-serif;
            background-color: #FBF8F6;
+           padding-inline: 1px;
            
       }
      img {
@@ -97,13 +98,13 @@ const renderHtml = (htmlContent, mainImage) => {
       .main-image{
           width: 100%;
           height: auto;
-          padding-inline: 2px;
+          
       }
 
       </style>
     </head>
       <body>
-        <div class="content">${htmlContent}</div>
+        <div>${htmlContent}</div>
         <div class="main-image-container">
           ${
             mainImage &&

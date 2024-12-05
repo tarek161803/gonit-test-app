@@ -17,7 +17,8 @@ import {
 } from "react-native";
 
 import { useDispatch, useSelector } from "react-redux";
-import QuestionFilter from "../../components/QuestionFilter";
+import CategoryFilter from "../../components/QuestionFilter/CategoryFilter";
+import StatusFilter from "../../components/QuestionFilter/StatusFilter";
 import { default as QuestionItem } from "../../components/QuestionItem";
 import COLORS from "../../constants/Colors";
 import { useGetQuestionsQuery } from "../../redux/slices/question/questionApi";
@@ -26,10 +27,11 @@ import { buildQuery } from "../../utils/utils";
 
 const Home = () => {
   const dispatch = useDispatch();
+  const { query } = useSelector((state) => state.question);
+
   const [inputPage, setInputPage] = useState(1);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
 
-  const { query } = useSelector((state) => state.question);
   const { data, isLoading, refetch, isFetching } = useGetQuestionsQuery(buildQuery(query));
   const [searchQuery, setSearchQuery] = useState("");
   const handleRefresh = () => refetch();
@@ -53,6 +55,10 @@ const Home = () => {
   }, [searchQuery]);
 
   useEffect(() => {
+    setInputPage(query.page);
+  }, [query.page]);
+
+  useEffect(() => {
     const showSubscription = Keyboard.addListener("keyboardDidShow", () => setKeyboardVisible(true));
     const hideSubscription = Keyboard.addListener("keyboardDidHide", () => setKeyboardVisible(false));
     return () => {
@@ -60,8 +66,6 @@ const Home = () => {
       hideSubscription.remove();
     };
   }, []);
-
-  if (isLoading || isFetching) return <ActivityIndicator color={COLORS.primary} size="large" style={{ flex: 1 }} />;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -78,27 +82,34 @@ const Home = () => {
           </Pressable>
         </View>
 
-        <QuestionFilter />
+        <View style={{ flexDirection: "row", gap: 12 }}>
+          <CategoryFilter />
+          <StatusFilter />
+        </View>
 
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()} accessible={false}>
-          <ScrollView
-            refreshControl={<RefreshControl refreshing={isLoading} onRefresh={handleRefresh} />}
-            style={styles.questionsContainer}>
-            {data?.data?.length
-              ? data?.data?.map((question) => (
-                  <View style={styles.questionItem} key={question._id}>
-                    <Text style={styles.serialText}>
-                      <Text style={styles.serialLabel}>S/N: </Text>
-                      {question.serial}
-                    </Text>
-                    <QuestionItem question={question} />
-                    <View style={styles.questionBadge}>
-                      <Text style={styles.questionBadgeText}>{question.status}</Text>
+          {isLoading || isFetching ? (
+            <ActivityIndicator color={COLORS.primary} size="large" style={{ flex: 1 }} />
+          ) : (
+            <ScrollView
+              refreshControl={<RefreshControl refreshing={isLoading} onRefresh={handleRefresh} />}
+              style={styles.questionsContainer}>
+              {data?.data?.length
+                ? data?.data?.map((question) => (
+                    <View style={styles.questionItem} key={question._id}>
+                      <Text style={styles.serialText}>
+                        <Text style={styles.serialLabel}>S/N: </Text>
+                        {question.serial}
+                      </Text>
+                      <QuestionItem question={question} />
+                      <View style={styles.questionBadge}>
+                        <Text style={styles.questionBadgeText}>{question.status}</Text>
+                      </View>
                     </View>
-                  </View>
-                ))
-              : !isLoading && <Text style={{ fontSize: 20 }}>No Questions Found.</Text>}
-          </ScrollView>
+                  ))
+                : !isLoading && <Text style={{ fontSize: 20 }}>No Questions Found.</Text>}
+            </ScrollView>
+          )}
         </TouchableWithoutFeedback>
 
         <View
@@ -204,13 +215,13 @@ const styles = StyleSheet.create({
   questionBadge: {
     flex: 1,
     position: "absolute",
-    top: 14,
+    top: 12,
     right: -4,
     paddingVertical: 4,
     paddingHorizontal: 8,
-    backgroundColor: "#ececec",
-    borderRadius: 6,
-    elevation: 2,
+    backgroundColor: "#faf4ef",
+    borderRadius: 4,
+    boxShadow: "0 0 5 0 #00000021",
   },
   questionBadgeText: {
     flex: 1,

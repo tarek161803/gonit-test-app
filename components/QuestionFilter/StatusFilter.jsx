@@ -1,10 +1,9 @@
-import AntDesign from "@expo/vector-icons/AntDesign";
+import Feather from "@expo/vector-icons/Feather";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { useDispatch, useSelector } from "react-redux";
-import { updateQuestionQuery } from "../redux/slices/question/questionSlice";
-
+import { updateQuestionQuery } from "../../redux/slices/question/questionSlice";
 const data = [
   { label: "All Status", value: "" },
   { label: "Draft", value: "draft" },
@@ -13,7 +12,7 @@ const data = [
   { label: "Published", value: "published" },
 ];
 
-const QuestionFilter = () => {
+const StatusFilter = () => {
   const dispatch = useDispatch();
   const { query } = useSelector((state) => state.question);
 
@@ -21,7 +20,7 @@ const QuestionFilter = () => {
     return (
       <View style={styles.item}>
         <Text style={styles.textItem}>{item.label}</Text>
-        {item.value === query.status && <AntDesign style={styles.icon} color="black" name="check" size={20} />}
+        {item.value === query.status && <Feather style={styles.icon} name="check-circle" size={18} color="black" />}
       </View>
     );
   };
@@ -29,10 +28,7 @@ const QuestionFilter = () => {
   return (
     <Dropdown
       style={styles.dropdown}
-      placeholderStyle={styles.placeholderStyle}
-      selectedTextStyle={styles.selectedTextStyle}
-      inputSearchStyle={styles.inputSearchStyle}
-      iconStyle={styles.iconStyle}
+      containerStyle={styles.containerStyle}
       data={data}
       search={false}
       maxHeight={300}
@@ -48,24 +44,31 @@ const QuestionFilter = () => {
   );
 };
 
-export default QuestionFilter;
+export default StatusFilter;
 
 const styles = StyleSheet.create({
   dropdown: {
-    marginHorizontal: 16,
+    marginRight: 16,
     marginBottom: 8,
     height: 50,
     backgroundColor: "white",
     borderRadius: 8,
-    padding: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
     borderColor: "#c9c9c9",
     borderWidth: 1,
+    flex: 1,
   },
+  containerStyle: {
+    marginTop: 4,
+    borderRadius: 8,
+  },
+
   icon: {
-    marginRight: 5,
+    marginRight: 0,
   },
   item: {
-    paddingHorizontal: 17,
+    paddingHorizontal: 14,
     paddingVertical: 10,
     flexDirection: "row",
     justifyContent: "space-between",

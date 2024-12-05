@@ -17,73 +17,48 @@ import {
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import SingleQuestion from "../../components/SingleQuestion";
-import COLORS from "../../constants/Colors";
 
-import { useUpdateQuestionMutation } from "../../redux/slices/question/questionApi";
+import { useLocalSearchParams } from "expo-router";
+import FooterButtons from "../../components/SingleQuestionPage/FooterButtons";
+import COLORS from "../../constants/Colors";
+import { useGetQuestionByIdQuery } from "../../redux/slices/question/questionApi";
 import { setQuestion } from "../../redux/slices/question/questionSlice";
 
 const AnswersSection = () => {
+  const { id } = useLocalSearchParams();
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth);
+
   const { question } = useSelector((state) => state.question);
   const answerOptions = [...question.wrongAnswers, question.answer].sort();
 
-  const [refreshing, setRefreshing] = useState(false);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
-  const [verifyQuestion, { isLoading }] = useUpdateQuestionMutation();
-  const [publishQuestion, { isLoading: publishing }] = useUpdateQuestionMutation();
+
+  const [skip, setSkip] = useState(true);
+  const { data, isLoading, refetch } = useGetQuestionByIdQuery(id, { skip });
 
   const [answerStyle, setAnswerStyle] = useState(null);
   const [userAnswer, setUserAnswer] = useState(null);
   const [inputAnswer, setInputAnswer] = useState("");
 
+  useEffect(() => {
+    if (data?.success) {
+      dispatch(setQuestion(data.data));
+    }
+  }, [data]);
+
   const handleCheckAnswer = (selectedAnswer) => {
     setUserAnswer(selectedAnswer);
   };
 
-  const handleVerify = async () => {
-    if (question.status === "verified" || question.status === "published") {
-      return;
-    }
-
-    const response = await verifyQuestion({ id: question._id, body: { status: "verified" } }).unwrap();
-
-    if (response.success) {
-      dispatch(setQuestion(response.data));
-    } else {
-      Alert.alert("Error", "Failed to Verify Question.");
-    }
-  };
-
-  const handlePublish = async () => {
-    if (question.status === "published") {
-      return;
-    }
-    const response = await publishQuestion({ id: question._id, body: { status: "published" } }).unwrap();
-
-    if (response.success) {
-      setQuestion(response.data);
-    } else {
-      Alert.alert("Error", "Failed to Publish Question.");
-    }
-  };
-
   const handleRefresh = async () => {
     try {
-      setRefreshing(true);
-      const response = await fetch("" + `questions/${question._id}`, {
-        headers: {
-          Authorization: `Bearer ${user?.token}`,
-        },
-      });
-      const data = await response.json();
-      if (data.success) {
-        setQuestion(data.data);
-        setRefreshing(false);
+      if (!skip) {
+        refetch();
+      } else {
+        setSkip(false);
       }
     } catch {
       Alert.alert("Error", "Failed to fetch question.");
-      setRefreshing(false);
     }
   };
 
@@ -132,7 +107,9 @@ const AnswersSection = () => {
               key={index}
               onPress={() => handleCheckAnswer(option)}
               style={[styles.answerOption, userAnswer === option && answerStyle, { flex: 1 }]}>
-              <Text style={styles.answerText}>{option}</Text>
+              <Text style={[styles.answerText, { color: userAnswer === option ? "#ffffff" : "#333333" }]}>
+                {option}
+              </Text>
             </Pressable>
           ))}
         </View>
@@ -148,7 +125,9 @@ const AnswersSection = () => {
                 key={index}
                 onPress={() => handleCheckAnswer(option)}
                 style={[styles.answerOption, userAnswer === option && answerStyle]}>
-                <Text style={styles.answerText}>{option}</Text>
+                <Text style={[styles.answerText, { color: userAnswer === option ? "#ffffff" : "#333333" }]}>
+                  {option}
+                </Text>
               </Pressable>
             ))}
         </View>
@@ -162,7 +141,7 @@ const AnswersSection = () => {
             key={index}
             onPress={() => handleCheckAnswer(option)}
             style={[styles.answerOption, userAnswer === option && answerStyle, { width: (width - 52) / 2 }]}>
-            <Text style={styles.answerText}>{option}</Text>
+            <Text style={[styles.answerText, { color: userAnswer === option ? "#ffffff" : "#333333" }]}>{option}</Text>
           </Pressable>
         ))}
       </View>
@@ -175,11 +154,10 @@ const AnswersSection = () => {
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()} accessible={false}>
           <ScrollView
             keyboardShouldPersistTaps="handled"
-            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
+            refreshControl={<RefreshControl refreshing={isLoading} onRefresh={handleRefresh} />}
             contentContainerStyle={{ backgroundColor: "#FBF8F6", flexGrow: 1 }}>
             <View style={{ flex: 1, marginVertical: 12, paddingHorizontal: 16 }}>
-              <Text style={{ fontSize: 16, marginBottom: 6 }}>
-                <Text style={{ fontFamily: "DefaultBold" }}>S/N: </Text>
+              <Text style={{ fontSize: 16, marginBottom: 8, textAlign: "right", color: "#666666", fontWeight: "500" }}>
                 {question.serial}
               </Text>
               <SingleQuestion question={question} />
@@ -201,66 +179,14 @@ const AnswersSection = () => {
               <Pressable
                 onPress={() => handleCheckAnswer(inputAnswer)}
                 style={[styles.checkButton, userAnswer === inputAnswer && answerStyle]}>
-                <Text style={styles.checkButtonText}>Check Answer</Text>
+                <Text style={[styles.checkButtonText, { color: userAnswer ? "#ffffff" : "#333333" }]}>
+                  Check Answer
+                </Text>
               </Pressable>
             </View>
           )}
 
-          <View style={{ marginTop: 12 }}>
-            {user?.user?.role !== "admin" && question.status === "draft" ? (
-              <Pressable
-                onPress={handleVerify}
-                style={[styles.verifyButton, { marginBottom: Platform.OS === "ios" ? 0 : 16 }]}>
-                <Text style={styles.verifyButtonText}>
-                  {isLoading
-                    ? "Verifying..."
-                    : question.status === "verified" || question.status === "published"
-                    ? "Verified"
-                    : "Verify Question"}
-                </Text>
-              </Pressable>
-            ) : (
-              <>
-                {user?.user?.role !== "admin" ? (
-                  <View style={[styles.verifyButton, { marginBottom: Platform.OS === "ios" ? 0 : 16 }]}>
-                    <Text style={styles.verifyButtonText}>
-                      {question.status === "verified"
-                        ? "Already Verified"
-                        : question.status === "published"
-                        ? "Already Published"
-                        : "Not Verified"}
-                    </Text>
-                  </View>
-                ) : null}
-              </>
-            )}
-
-            {user?.user?.role === "admin" && (
-              <>
-                {question.status === "draft" ? (
-                  <Pressable
-                    onPress={handleVerify}
-                    style={[styles.verifyButton, { marginBottom: Platform.OS === "ios" ? 0 : 16 }]}>
-                    <Text style={styles.verifyButtonText}>
-                      {isLoading ? "Verifying..." : question.status === "verified" ? "Verified" : "Verify Question"}
-                    </Text>
-                  </Pressable>
-                ) : (
-                  <Pressable
-                    onPress={handlePublish}
-                    style={[styles.verifyButton, { marginBottom: Platform.OS === "ios" ? 0 : 16 }]}>
-                    <Text style={styles.verifyButtonText}>
-                      {publishing
-                        ? "Publishing..."
-                        : question.status === "published"
-                        ? "Already Published"
-                        : "Publish Question"}
-                    </Text>
-                  </Pressable>
-                )}
-              </>
-            )}
-          </View>
+          <FooterButtons />
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -291,11 +217,12 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: "#333",
     fontWeight: "bold",
+    fontFamily: "DefaultRegular",
   },
   correctAnswer: {
     backgroundColor: COLORS.primary,
     boxShadow: "0 5 0 0 #1a9b49",
-    borderColor: "#1a9b49",
+    borderColor: COLORS.primary,
   },
   wrongAnswer: {
     backgroundColor: "#FF4B4C",
@@ -309,6 +236,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     borderColor: "#D8D7D6",
     borderWidth: 1,
+    fontFamily: "DefaultRegular",
+    fontSize: 18,
   },
   checkButton: {
     padding: 12,
@@ -322,20 +251,7 @@ const styles = StyleSheet.create({
   },
   checkButtonText: {
     color: "#333333",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-
-  verifyButton: {
-    padding: 16,
-    borderRadius: 8,
-    backgroundColor: COLORS.primary,
-    alignItems: "center",
-  },
-
-  verifyButtonText: {
-    color: "#ffffff",
     fontSize: 18,
-    fontFamily: "DefaultRegular",
+    fontFamily: "DefaultBold",
   },
 });

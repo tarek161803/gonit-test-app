@@ -45,9 +45,6 @@ const Login = () => {
       }
     } catch {
       Alert.alert("Something Went Wrong!", "Please try again later.");
-    } finally {
-      setEmail("");
-      setPassword("");
     }
   };
 
