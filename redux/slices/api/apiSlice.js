@@ -3,7 +3,7 @@ import * as SecureStore from "expo-secure-store";
 import { setUserInfo } from "../auth/authSlice.js";
 const localUrl = "http://127.0.0.1:8080/api";
 const productionUrl = "https://goldfish-app-fwiva.ondigitalocean.app/api";
-const baseUrl = localUrl;
+const baseUrl = productionUrl;
 
 const baseQueryWithReauth = async (args, api, extraOptions) => {
   const baseQuery = fetchBaseQuery({

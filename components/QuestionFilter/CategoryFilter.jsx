@@ -38,6 +38,9 @@ const CategoryFilter = () => {
       style={styles.dropdown}
       containerStyle={styles.containerStyle}
       data={categories}
+      selectedTextProps={{
+        numberOfLines: 1,
+      }}
       search={false}
       maxHeight={300}
       labelField="name"
@@ -58,11 +61,11 @@ const styles = StyleSheet.create({
   dropdown: {
     marginLeft: 16,
     marginBottom: 8,
-    height: 50,
+    height: 40,
     backgroundColor: "white",
     borderRadius: 8,
     paddingHorizontal: 12,
-    paddingVertical: 8,
+
     borderColor: "#c9c9c9",
     borderWidth: 1,
     flex: 1,
