@@ -6,6 +6,7 @@ import React, { useEffect } from "react";
 import { Alert } from "react-native";
 import { Provider, useDispatch } from "react-redux";
 
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { setUserInfo } from "../redux/slices/auth/authSlice";
 import { store } from "../redux/store";
 
@@ -56,9 +57,11 @@ const MainLayout = () => {
     }
   }, [loaded]);
   return (
-    <Provider store={store}>
-      <InitialLayout />
-    </Provider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Provider store={store}>
+        <InitialLayout />
+      </Provider>
+    </GestureHandlerRootView>
   );
 };
 

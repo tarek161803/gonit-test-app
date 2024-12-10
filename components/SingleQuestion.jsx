@@ -23,6 +23,7 @@ const renderHtml = (htmlContent, mainImage) => {
            font-family: "Lato", sans-serif;
            background-color: #FBF8F6;
            padding-inline: 1px;
+          
            
       }
      img {
@@ -132,7 +133,7 @@ const SingleQuestion = ({ question }) => {
     "(function() {window.ReactNativeWebView.postMessage(document.documentElement.scrollHeight);})()";
 
   return (
-    <View style={{ flex: 1, height: webViewHeights || 10 }}>
+    <View style={{ height: webViewHeights || 10 }}>
       <WebView
         source={{
           html: renderHtml(htmlContent.replace(/<br>/g, "<div class='line-break'></div>"), question.image),
