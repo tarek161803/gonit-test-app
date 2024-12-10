@@ -57,6 +57,7 @@ const renderHtml = (htmlContent, mainImage) => {
       }
       ol ::marker {
           font-weight: bold;
+          font-size: 20px;
       }
       table {
           border-collapse: collapse;
