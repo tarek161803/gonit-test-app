@@ -8,7 +8,7 @@ const InfoBtnContainer = ({ showHint, setShowHint }) => {
   };
   return (
     <View style={styles.container}>
-      <Pressable onPress={handleHintShow} style={styles.infoButton}>
+      <Pressable onPress={handleHintShow} style={[styles.infoButton]}>
         <MaterialCommunityIcons style={{ textAlign: "center" }} name="lightbulb-on-outline" size={22} color="black" />
         <Text style={styles.infoButtonText}>Hint</Text>
       </Pressable>
