@@ -18,6 +18,7 @@ import SingleQuestion from "../../components/SingleQuestion";
 import { useLocalSearchParams } from "expo-router";
 import AnswerOptions from "../../components/SingleQuestionPage/AnswerOptions";
 import FooterButtons from "../../components/SingleQuestionPage/FooterButtons";
+import HintAndExplanation from "../../components/SingleQuestionPage/HintAndExplanation";
 import InfoBtnContainer from "../../components/SingleQuestionPage/InfoBtnContainer";
 import { useGetQuestionByIdQuery } from "../../redux/slices/question/questionApi";
 import { setQuestion } from "../../redux/slices/question/questionSlice";
@@ -31,6 +32,9 @@ const AnswersSection = () => {
   const { data, isLoading, refetch } = useGetQuestionByIdQuery(id, { skip });
 
   const [showHint, setShowHint] = useState(false);
+  const [showExplanation, setShowExplanation] = useState(false);
+
+  const [checkHintAndExplanation, setCheckHintAndExplanation] = useState({ hint: false, explanation: false });
 
   useEffect(() => {
     if (data?.success) {
@@ -72,39 +76,25 @@ const AnswersSection = () => {
             keyboardShouldPersistTaps="handled"
             refreshControl={<RefreshControl refreshing={isLoading} onRefresh={handleRefresh} />}
             contentContainerStyle={{ backgroundColor: "#FBF8F6", flexGrow: 1 }}>
-            <View style={{ flex: 1, marginVertical: 12, paddingHorizontal: 16 }}>
+            <View style={{ flex: 1, marginVertical: 12, paddingHorizontal: 16, paddingBottom: 70 }}>
               <Text style={{ fontSize: 16, marginBottom: 8, textAlign: "right", color: "#666666", fontWeight: "500" }}>
                 {question.serial}
               </Text>
               <SingleQuestion question={question} />
-
-              {showHint && (
-                <>
-                  {question.hint ? (
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        marginBottom: 8,
-                        textAlign: "right",
-                        color: "#666666",
-                        fontWeight: "500",
-                      }}>
-                      {question.hint}
-                    </Text>
-                  ) : (
-                    <View>
-                      <Text>No Hint Available</Text>
-                    </View>
-                  )}
-                </>
-              )}
+              <HintAndExplanation showHint={showHint} question={question} showExplanation={showExplanation} />
             </View>
           </ScrollView>
         </TouchableWithoutFeedback>
         <View style={[styles.container, { paddingBottom: Platform.OS === "ios" && keyboardVisible ? 110 : 0 }]}>
-          <InfoBtnContainer showHint={showHint} setShowHint={setShowHint} />
+          <InfoBtnContainer
+            showHint={showHint}
+            setShowHint={setShowHint}
+            showExplanation={showExplanation}
+            setShowExplanation={setShowExplanation}
+            setCheckHintAndExplanation={setCheckHintAndExplanation}
+          />
           <AnswerOptions />
-          <FooterButtons />
+          <FooterButtons checkHintAndExplanation={checkHintAndExplanation} />
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>

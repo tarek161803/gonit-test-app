@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { View } from "react-native";
 import { WebView } from "react-native-webview";
-import useQuestionWithLatexAndImage from "../hooks/useQuestionWithLatexAndImage";
+import useQuestionWithLatexAndImage from "../../hooks/useQuestionWithLatexAndImage";
 
 const renderHtml = (htmlContent, mainImage) => {
   return `
@@ -34,7 +34,6 @@ const renderHtml = (htmlContent, mainImage) => {
       }
       p {
           font-size: 20px;
-          font-weight: 700;
           line-height: 1.3;
           color: #342618;
       }
@@ -117,8 +116,8 @@ const renderHtml = (htmlContent, mainImage) => {
   `;
 };
 
-const SingleQuestion = ({ question }) => {
-  const htmlContent = useQuestionWithLatexAndImage(question.question, question.images, question.latex);
+const ExplanationView = ({ question }) => {
+  const htmlContent = useQuestionWithLatexAndImage(question.explanation, question.images, question.latex);
   const [webViewHeights, setWebViewHeights] = useState();
   const webViewRef = useRef(null);
   const handleWebViewMessage = (event) => {
@@ -132,10 +131,10 @@ const SingleQuestion = ({ question }) => {
     "(function() {window.ReactNativeWebView.postMessage(document.documentElement.scrollHeight);})()";
 
   return (
-    <View style={{ height: webViewHeights || 10 }}>
+    <View style={{ height: webViewHeights || 10, marginTop: 10 }}>
       <WebView
         source={{
-          html: renderHtml(htmlContent.replace(/<br>/g, "<div class='line-break'></div>"), question.image),
+          html: renderHtml(htmlContent.replace(/<br>/g, "<div class='line-break'></div>"), question.explanationImage),
         }}
         ref={webViewRef}
         injectedJavaScript={webViewScript}
@@ -150,4 +149,4 @@ const SingleQuestion = ({ question }) => {
   );
 };
 
-export default SingleQuestion;
+export default ExplanationView;

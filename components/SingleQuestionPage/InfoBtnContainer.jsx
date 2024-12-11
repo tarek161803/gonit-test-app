@@ -2,17 +2,33 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-const InfoBtnContainer = ({ showHint, setShowHint }) => {
+const InfoBtnContainer = ({
+  showHint,
+  setShowHint,
+  showExplanation,
+  setShowExplanation,
+  setCheckHintAndExplanation,
+}) => {
   const handleHintShow = () => {
+    setCheckHintAndExplanation((prevState) => ({ ...prevState, hint: true }));
     setShowHint((prevState) => !prevState);
+  };
+
+  const handleExplanationShow = () => {
+    setCheckHintAndExplanation((prevState) => ({ ...prevState, explanation: true }));
+    setShowExplanation((prevState) => !prevState);
   };
   return (
     <View style={styles.container}>
-      <Pressable onPress={handleHintShow} style={[styles.infoButton]}>
+      <Pressable
+        onPress={handleHintShow}
+        style={[styles.infoButton, { backgroundColor: showHint ? "#E7FFD6" : "#ffffff" }]}>
         <MaterialCommunityIcons style={{ textAlign: "center" }} name="lightbulb-on-outline" size={22} color="black" />
         <Text style={styles.infoButtonText}>Hint</Text>
       </Pressable>
-      <Pressable style={styles.infoButton}>
+      <Pressable
+        onPress={handleExplanationShow}
+        style={[styles.infoButton, { backgroundColor: showExplanation ? "#E7FFD6" : "#ffffff" }]}>
         <MaterialCommunityIcons style={{ textAlign: "center" }} name="lightbulb-on-outline" size={22} color="black" />
         <Text style={styles.infoButtonText}>Explain</Text>
       </Pressable>

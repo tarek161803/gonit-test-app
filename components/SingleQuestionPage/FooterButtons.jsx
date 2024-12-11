@@ -8,7 +8,7 @@ import { useGetQuestionsQuery, useUpdateQuestionMutation } from "../../redux/sli
 import { setQuestion, updateQuestionQuery } from "../../redux/slices/question/questionSlice";
 import { buildQuery } from "../../utils/utils";
 
-const FooterButtons = () => {
+const FooterButtons = ({ checkHintAndExplanation }) => {
   const router = useRouter();
   const dispatch = useDispatch();
   const { id } = useLocalSearchParams();
@@ -24,6 +24,10 @@ const FooterButtons = () => {
 
   const { data, isFetching } = useGetQuestionsQuery(buildQuery(query));
   const handleVerify = async () => {
+    if (checkHintAndExplanation.hint === false || checkHintAndExplanation.explanation === false) {
+      Alert.alert("Wait...!", "Please Check Hint And Explanation First.");
+      return;
+    }
     if (question.status === "verified" || question.status === "published") {
       return;
     }
@@ -37,6 +41,10 @@ const FooterButtons = () => {
   };
 
   const handlePublish = async () => {
+    if (checkHintAndExplanation.hint === false || checkHintAndExplanation.explanation === false) {
+      Alert.alert("Wait...!", "Please Check Hint And Explanation First.");
+      return;
+    }
     if (question.status === "published") {
       return;
     }
