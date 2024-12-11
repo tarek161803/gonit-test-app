@@ -39,7 +39,7 @@ const renderHtml = (htmlContent, mainImage) => {
           color: #342618;
       }
       ul, ol {
-          padding: 0 1rem;
+          padding: 0 20px;
           margin: 0.5rem;
       }
       strong {
@@ -106,12 +106,12 @@ const renderHtml = (htmlContent, mainImage) => {
     </head>
       <body>
         <div>${htmlContent}</div>
-        <div class="main-image-container">
           ${
             mainImage &&
-            `<img class="main-image" src="data:image/svg+xml;utf8,${encodeURIComponent(mainImage)}" alt="main-image" />`
+            `<div class="main-image-container">
+              <img class="main-image" src="data:image/svg+xml;utf8,${encodeURIComponent(mainImage)}" alt="main-image" />
+            </div>`
           }
-        </div>
       </body>
     </html>
   `;

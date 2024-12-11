@@ -18,6 +18,8 @@ import {
 
 import { useDispatch, useSelector } from "react-redux";
 import CategoryFilter from "../../components/QuestionFilter/CategoryFilter";
+import DifficultyFilter from "../../components/QuestionFilter/DifficultyFilter";
+import GradeFilter from "../../components/QuestionFilter/GradeFilter";
 import StatusFilter from "../../components/QuestionFilter/StatusFilter";
 import { default as QuestionItem } from "../../components/QuestionItem";
 import COLORS from "../../constants/Colors";
@@ -91,6 +93,11 @@ const Home = () => {
           <Pressable onPress={handleSearch} style={styles.searchButton}>
             <Text style={styles.searchButtonText}>Search</Text>
           </Pressable>
+        </View>
+
+        <View style={{ flexDirection: "row", gap: 12 }}>
+          <GradeFilter />
+          <DifficultyFilter />
         </View>
 
         <View style={{ flexDirection: "row", gap: 12 }}>

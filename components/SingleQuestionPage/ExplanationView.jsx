@@ -105,12 +105,12 @@ const renderHtml = (htmlContent, mainImage) => {
     </head>
       <body>
         <div>${htmlContent}</div>
-        <div class="main-image-container">
           ${
             mainImage &&
-            `<img class="main-image" src="data:image/svg+xml;utf8,${encodeURIComponent(mainImage)}" alt="main-image" />`
+            `<div class="main-image-container">     
+              <img class="main-image" src="data:image/svg+xml;utf8,${encodeURIComponent(mainImage)}" alt="main-image" />
+            </div>`
           }
-        </div>
       </body>
     </html>
   `;
@@ -131,16 +131,19 @@ const ExplanationView = ({ question }) => {
     "(function() {window.ReactNativeWebView.postMessage(document.documentElement.scrollHeight);})()";
 
   return (
-    <View style={{ height: webViewHeights || 10, marginTop: 10 }}>
+    <View style={{ height: webViewHeights || 0, marginTop: 10 }}>
       <WebView
         source={{
-          html: renderHtml(htmlContent.replace(/<br>/g, "<div class='line-break'></div>"), question.explanationImage),
+          html: renderHtml(
+            htmlContent.replace(/<br>/g, "<div class='line-break'></div>"),
+            question.explanationImage || ""
+          ),
         }}
         ref={webViewRef}
         injectedJavaScript={webViewScript}
         onMessage={(event) => handleWebViewMessage(event)}
         javaScriptEnabled={true}
-        style={{ height: webViewHeights || 10 }}
+        style={{ height: webViewHeights || 0 }}
         scrollEnabled={false}
         pointerEvents="none"
         onLoadEnd={() => webViewRef.current.injectJavaScript(webViewScript)}

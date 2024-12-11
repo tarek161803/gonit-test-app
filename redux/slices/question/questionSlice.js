@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  query: { category: "", status: "", search: "", per_page: "10", page: 1, sort: "desc" },
+  query: { category: "", status: "", grade: "", difficulty: "", search: "", per_page: "10", page: 1, sort: "desc" },
   question: {},
 };
 
