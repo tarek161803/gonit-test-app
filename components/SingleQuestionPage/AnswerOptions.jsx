@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Dimensions, Pressable, Text, TextInput, View } from "react-native";
 import { useSelector } from "react-redux";
 import COLORS from "../../constants/Colors";
@@ -10,7 +10,11 @@ const AnswerOptions = () => {
   const [userAnswer, setUserAnswer] = useState(null);
   const [inputAnswer, setInputAnswer] = useState("");
   const { question } = useSelector((state) => state.question);
-  const answerOptions = [...question.wrongAnswers, question.answer].sort();
+
+  const answerOptions = useMemo(
+    () => [...question.wrongAnswers, question.answer].sort(() => Math.random() - 0.5),
+    [answerOptions]
+  );
 
   useEffect(() => {
     let timeoutId;
@@ -36,7 +40,7 @@ const AnswerOptions = () => {
     if (answerOptions.every((option) => option.length === 1)) {
       return (
         <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 20, marginBottom: 20 }}>
-          {answerOptions.map((option, index) => (
+          {answerOptions.sort().map((option, index) => (
             <Pressable
               key={index}
               onPress={() => handleCheckAnswer(option)}
@@ -52,14 +56,19 @@ const AnswerOptions = () => {
 
     if (answerOptions.some((option) => option.length > 5)) {
       return (
-        <View style={{ gap: 20, marginBottom: 10, marginTop: 10 }}>
+        <View style={{ gap: 16, marginBottom: 10, marginTop: 10 }}>
           {question.wrongAnswers &&
             answerOptions.map((option, index) => (
               <Pressable
                 key={index}
                 onPress={() => handleCheckAnswer(option)}
                 style={[styles.answerOption, userAnswer === option && answerStyle]}>
-                <Text style={[styles.answerText, { color: userAnswer === option ? "#ffffff" : "#333333" }]}>
+                <Text
+                  style={[
+                    styles.answerText,
+                    { fontSize: 20 },
+                    { color: userAnswer === option ? "#ffffff" : "#333333" },
+                  ]}>
                   {option}
                 </Text>
               </Pressable>
@@ -123,8 +132,7 @@ const styles = {
   answerText: {
     fontSize: 24,
     color: "#333",
-    fontWeight: "bold",
-    fontFamily: "DefaultRegular",
+    fontFamily: "DefaultBold",
   },
   correctAnswer: {
     backgroundColor: COLORS.primary,
