@@ -2,22 +2,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-const InfoBtnContainer = ({
-  showHint,
-  setShowHint,
-  showExplanation,
-  setShowExplanation,
-  setCheckHintAndExplanation,
-}) => {
-  const handleHintShow = () => {
-    setCheckHintAndExplanation((prevState) => ({ ...prevState, hint: true }));
-    setShowHint((prevState) => !prevState);
-  };
-
-  const handleExplanationShow = () => {
-    setCheckHintAndExplanation((prevState) => ({ ...prevState, explanation: true }));
-    setShowExplanation((prevState) => !prevState);
-  };
+const InfoBtnContainer = ({ showHint, handleHintShow, showExplanation, handleExplanationShow }) => {
   return (
     <View style={styles.container}>
       <Pressable

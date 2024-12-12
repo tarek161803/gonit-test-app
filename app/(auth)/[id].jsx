@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Alert,
   Keyboard,
@@ -15,10 +15,11 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import SingleQuestion from "../../components/SingleQuestion";
 
+import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
 import AnswerOptions from "../../components/SingleQuestionPage/AnswerOptions";
+import ExplanationView from "../../components/SingleQuestionPage/ExplanationView";
 import FooterButtons from "../../components/SingleQuestionPage/FooterButtons";
-import HintAndExplanation from "../../components/SingleQuestionPage/HintAndExplanation";
 import InfoBtnContainer from "../../components/SingleQuestionPage/InfoBtnContainer";
 import { useGetQuestionByIdQuery } from "../../redux/slices/question/questionApi";
 import { setQuestion } from "../../redux/slices/question/questionSlice";
@@ -53,6 +54,37 @@ const AnswersSection = () => {
       Alert.alert("Error", "Failed to fetch question.");
     }
   };
+  const scrollViewRef = useRef(null);
+  const hintRef = useRef(null);
+  const explanationRef = useRef(null);
+
+  const handleHintShow = () => {
+    setShowHint((prevState) => !prevState);
+    setCheckHintAndExplanation((prevState) => ({ ...prevState, hint: true }));
+    setTimeout(() => {
+      hintRef.current?.measureLayout(
+        scrollViewRef.current,
+        (x, y) => {
+          scrollViewRef.current?.scrollTo({ y, animated: true });
+        },
+        (error) => console.error(error)
+      );
+    }, 100);
+  };
+
+  const handleExplanationShow = () => {
+    setShowExplanation((prevState) => !prevState);
+    setCheckHintAndExplanation((prevState) => ({ ...prevState, explanation: true }));
+    setTimeout(() => {
+      explanationRef.current?.measureLayout(
+        scrollViewRef.current,
+        (x, y) => {
+          scrollViewRef.current?.scrollTo({ y, animated: true });
+        },
+        (error) => console.error(error)
+      );
+    }, 600);
+  };
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener("keyboardDidShow", () => {
@@ -73,6 +105,7 @@ const AnswersSection = () => {
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "height" : "padding"} style={{ flex: 1 }}>
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()} accessible={false}>
           <ScrollView
+            ref={scrollViewRef}
             keyboardShouldPersistTaps="handled"
             refreshControl={<RefreshControl refreshing={isLoading} onRefresh={handleRefresh} />}
             contentContainerStyle={{ backgroundColor: "#FBF8F6", flexGrow: 1 }}>
@@ -81,17 +114,58 @@ const AnswersSection = () => {
                 {question.serial}
               </Text>
               <SingleQuestion question={question} />
-              <HintAndExplanation showHint={showHint} question={question} showExplanation={showExplanation} />
+              <>
+                {showHint && (
+                  <View ref={hintRef}>
+                    {question.hint ? (
+                      <View style={{ marginTop: 10 }}>
+                        <View style={styles.infoTitle}>
+                          <AntDesign name="questioncircleo" size={20} color="#1BB3FC" />
+                          <Text style={styles.infoTitleText}>Hint</Text>
+                        </View>
+                        <Text style={styles.hintText}>{question.hint}</Text>
+                      </View>
+                    ) : (
+                      <View style={{ marginTop: 20, flexDirection: "row", gap: 5, alignItems: "center" }}>
+                        <View style={{ height: 24, width: 24 }}>
+                          <MaterialIcons name="error-outline" size={24} color="red" />
+                        </View>
+                        <Text style={{ fontSize: 18, color: "#333333" }}>Hint Not Available</Text>
+                      </View>
+                    )}
+                  </View>
+                )}
+
+                {showExplanation && (
+                  <View ref={explanationRef}>
+                    {question.explanation || question.explanationImage ? (
+                      <View style={{ marginTop: 16 }}>
+                        <View style={styles.infoTitle}>
+                          <AntDesign name="questioncircleo" size={20} color="#1BB3FC" />
+                          <Text style={styles.infoTitleText}>Explanation</Text>
+                        </View>
+                        <ExplanationView question={question} />
+                      </View>
+                    ) : (
+                      <View style={{ marginTop: 10, flexDirection: "row", gap: 5, alignItems: "center" }}>
+                        <View style={{ height: 24, width: 24 }}>
+                          <MaterialIcons name="error-outline" size={24} color="red" />
+                        </View>
+                        <Text style={{ fontSize: 18, color: "#333333" }}>Explanation Not Available</Text>
+                      </View>
+                    )}
+                  </View>
+                )}
+              </>
             </View>
           </ScrollView>
         </TouchableWithoutFeedback>
         <View style={[styles.container, { paddingBottom: Platform.OS === "ios" && keyboardVisible ? 110 : 0 }]}>
           <InfoBtnContainer
             showHint={showHint}
-            setShowHint={setShowHint}
             showExplanation={showExplanation}
-            setShowExplanation={setShowExplanation}
-            setCheckHintAndExplanation={setCheckHintAndExplanation}
+            handleHintShow={handleHintShow}
+            handleExplanationShow={handleExplanationShow}
           />
           <AnswerOptions />
           <FooterButtons checkHintAndExplanation={checkHintAndExplanation} />
@@ -109,5 +183,29 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     boxShadow: "0 -5 10  #0000001d",
     position: "relative",
+  },
+
+  infoTitle: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    marginTop: 10,
+    borderWidth: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 10,
+    borderColor: "#1BB3FC",
+  },
+
+  infoTitleText: {
+    fontSize: 18,
+    fontWeight: "500",
+    color: "#1BB3FC",
+  },
+
+  hintText: {
+    fontSize: 18,
+    marginTop: 6,
+    color: "#342618",
   },
 });

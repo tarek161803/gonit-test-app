@@ -39,7 +39,7 @@ const renderHtml = (htmlContent) => {
           color: #333333;
       }
       ul, ol {
-          padding: 0 1rem;
+          padding: 0 20px;
           margin: 0.5rem;
       }
       strong {

@@ -43,7 +43,8 @@ const Login = () => {
       } else {
         Alert.alert("Invalid Credentials!", "Please try again.");
       }
-    } catch {
+    } catch (err) {
+      console.log(err);
       Alert.alert("Something Went Wrong!", "Please try again later.");
     }
   };

@@ -38,7 +38,7 @@ const renderHtml = (htmlContent, mainImage) => {
           color: #342618;
       }
       ul, ol {
-          padding: 0 1rem;
+          padding: 0 20px;
           margin: 0.5rem;
       }
       strong {

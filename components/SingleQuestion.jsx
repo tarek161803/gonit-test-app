@@ -34,7 +34,6 @@ const renderHtml = (htmlContent, mainImage) => {
       }
       p {
           font-size: 20px;
-          font-weight: 700;
           line-height: 1.3;
           color: #342618;
       }
