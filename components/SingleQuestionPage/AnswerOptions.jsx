@@ -1,3 +1,4 @@
+import { Audio } from "expo-av";
 import * as Haptics from "expo-haptics";
 import React, { useEffect, useMemo, useState } from "react";
 import { Dimensions, Pressable, Text, TextInput, View } from "react-native";
@@ -5,6 +6,22 @@ import { useSelector } from "react-redux";
 import COLORS from "../../constants/Colors";
 
 const AnswerOptions = () => {
+  const [sound, setSound] = useState();
+
+  async function playSound(selectedSound) {
+    const { sound } = await Audio.Sound.createAsync(selectedSound);
+    setSound(sound);
+    await sound.playAsync();
+  }
+
+  useEffect(() => {
+    return sound
+      ? () => {
+          sound.unloadAsync();
+        }
+      : undefined;
+  }, [sound]);
+
   const { width } = Dimensions.get("window");
 
   const [answerStyle, setAnswerStyle] = useState(null);
@@ -23,9 +40,11 @@ const AnswerOptions = () => {
       if (userAnswer.trim() === question.answer) {
         setAnswerStyle(styles.correctAnswer);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        playSound(require("../../assets/audio/correct.mp3"));
       } else {
         setAnswerStyle(styles.wrongAnswer);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        playSound(require("../../assets/audio/failure.wav"));
       }
 
       timeoutId = setTimeout(() => {
