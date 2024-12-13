@@ -1,3 +1,4 @@
+import * as Haptics from "expo-haptics";
 import React, { useEffect, useMemo, useState } from "react";
 import { Dimensions, Pressable, Text, TextInput, View } from "react-native";
 import { useSelector } from "react-redux";
@@ -21,8 +22,10 @@ const AnswerOptions = () => {
     if (userAnswer) {
       if (userAnswer.trim() === question.answer) {
         setAnswerStyle(styles.correctAnswer);
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       } else {
         setAnswerStyle(styles.wrongAnswer);
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       }
 
       timeoutId = setTimeout(() => {
