@@ -17,11 +17,11 @@ import {
 } from "react-native";
 
 import { useDispatch, useSelector } from "react-redux";
+import QuestionListItem from "../../components/ListItems/QuestionListItem";
 import CategoryFilter from "../../components/QuestionFilter/CategoryFilter";
 import DifficultyFilter from "../../components/QuestionFilter/DifficultyFilter";
 import GradeFilter from "../../components/QuestionFilter/GradeFilter";
 import StatusFilter from "../../components/QuestionFilter/StatusFilter";
-import { default as QuestionItem } from "../../components/QuestionItem";
 import COLORS from "../../constants/Colors";
 import { useGetQuestionsQuery } from "../../redux/slices/question/questionApi";
 import { updateQuestionQuery } from "../../redux/slices/question/questionSlice";
@@ -119,7 +119,7 @@ const Home = () => {
                         <Text style={styles.serialLabel}>S/N: </Text>
                         {question.serial}
                       </Text>
-                      <QuestionItem question={question} />
+                      <QuestionListItem question={question} />
                       <View style={styles.questionBadge}>
                         <Text style={styles.questionBadgeText}>{question.status}</Text>
                       </View>

@@ -13,10 +13,10 @@ import {
   View,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import SingleQuestion from "../../components/SingleQuestion";
 
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
+import SingleQuestionItem from "../../components/SingleItem/SingleQuestionItem";
 import AnswerOptions from "../../components/SingleQuestionPage/AnswerOptions";
 import ExplanationView from "../../components/SingleQuestionPage/ExplanationView";
 import FooterButtons from "../../components/SingleQuestionPage/FooterButtons";
@@ -113,7 +113,7 @@ const AnswersSection = () => {
               <Text style={{ fontSize: 16, marginBottom: 8, textAlign: "right", color: "#666666", fontWeight: "500" }}>
                 {question.serial}
               </Text>
-              <SingleQuestion question={question} />
+              <SingleQuestionItem question={question} />
               <>
                 {showHint && (
                   <View ref={hintRef}>
