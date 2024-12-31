@@ -14,6 +14,7 @@ const SingleQuestionItem = ({ question }) => {
         <DOMComponent
           dom={{
             PointerEvent: "none",
+            scrollEnabled: false,
           }}
           setHeight={setHeight}
           html={questionHtml}

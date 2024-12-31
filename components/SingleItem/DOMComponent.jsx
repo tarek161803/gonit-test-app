@@ -23,10 +23,6 @@ const DOMComponent = ({ setHeight, html, mainImage }) => {
   useLayoutEffect(() => {
     const height = containerRef.current.getBoundingClientRect().height;
     setHeight(height);
-
-    return () => {
-      setHeight(0);
-    };
   }, [containerRef]);
 
   return (
