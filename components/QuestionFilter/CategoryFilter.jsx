@@ -13,7 +13,7 @@ const CategoryFilter = () => {
   const { data, isLoading } = useGetCategoriesQuery(
     buildQuery({
       type: "main",
-      per_page: 100,
+      per_page: 1000,
       grade,
     })
   );
