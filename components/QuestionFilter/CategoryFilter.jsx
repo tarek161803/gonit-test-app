@@ -2,12 +2,21 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { useDispatch, useSelector } from "react-redux";
-import { useGetCategoriesQuery } from "../../redux/slices/category/categorySlice";
+import { useGetCategoriesQuery } from "../../redux/slices/category/categoryApi";
 import { updateQuestionQuery } from "../../redux/slices/question/questionSlice";
+import { buildQuery } from "../../utils/utils";
 
 const CategoryFilter = () => {
   const [categories, setCategories] = useState([]);
-  const { data, isLoading } = useGetCategoriesQuery("?type=main&per_page=100");
+  const { grade } = useSelector((state) => state.question.query);
+
+  const { data, isLoading } = useGetCategoriesQuery(
+    buildQuery({
+      type: "main",
+      per_page: 10,
+      grade,
+    })
+  );
   const dispatch = useDispatch();
   const { query } = useSelector((state) => state.question);
 

@@ -45,7 +45,7 @@ const GradeFilter = () => {
       placeholder="Select Difficulty"
       value={query.grade}
       onChange={(item) => {
-        dispatch(updateQuestionQuery({ grade: item.value, page: 1 }));
+        dispatch(updateQuestionQuery({ grade: item.value, page: 1, category: "" }));
       }}
       renderItem={renderItem}
     />
