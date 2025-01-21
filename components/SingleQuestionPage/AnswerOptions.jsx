@@ -31,7 +31,7 @@ const AnswerOptions = () => {
 
   const answerOptions = useMemo(
     () => [...question.wrongAnswers, question.answer].sort(() => Math.random() - 0.5),
-    [answerOptions]
+    [question]
   );
 
   useEffect(() => {

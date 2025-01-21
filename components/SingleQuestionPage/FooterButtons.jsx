@@ -67,7 +67,7 @@ const FooterButtons = ({ checkHintAndExplanation }) => {
       const currentQuestionIndex = data.data.findIndex((q) => q._id === id);
       if (currentQuestionIndex < data?.data?.length - 1) {
         dispatch(setQuestion(data.data[currentQuestionIndex + 1]));
-        router.replace(`/${data.data[currentQuestionIndex + 1]._id}`);
+        router.setParams({ id: data.data[currentQuestionIndex + 1]._id });
       } else {
         dispatch(updateQuestionQuery({ page: +query.page + 1 }));
       }
