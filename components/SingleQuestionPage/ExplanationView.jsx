@@ -8,7 +8,7 @@ const ExplanationView = ({ question }) => {
   const html = useQuestionWithLatexAndImage(question?.explanation, question?.images, question?.latex);
 
   return (
-    <View style={{ height }}>
+    <View>
       <DOMComponent
         onLayout={async (size) => {
           if (size[1] !== height) {
@@ -18,6 +18,7 @@ const ExplanationView = ({ question }) => {
         dom={{
           PointerEvent: "none",
           scrollEnabled: false,
+          style: { height },
         }}
         html={html}
         mainImage={question.explanationImage}

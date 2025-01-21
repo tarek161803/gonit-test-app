@@ -9,7 +9,7 @@ const Question = ({ question }) => {
   const questionHtml = useQuestionWithLatexAndImage(question.question, question.images, question.latex);
 
   return (
-    <View style={{ height }}>
+    <View>
       <DOMComponent
         onLayout={async (size) => {
           if (size[1] !== height) {
@@ -19,6 +19,7 @@ const Question = ({ question }) => {
         dom={{
           PointerEvent: "none",
           scrollEnabled: false,
+          style: { height },
         }}
         html={questionHtml}
         mainImage={question.image}
