@@ -4,7 +4,27 @@ import "katex/dist/katex.min.css";
 import { useEffect, useRef } from "react";
 import "../../styles/single-item.css";
 
-const DOMComponent = ({ html, mainImage }) => {
+function useSize(callback) {
+  useEffect(() => {
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const { width, height } = entry.contentRect;
+        callback([width, height]);
+      }
+    });
+
+    observer.observe(document.body);
+
+    callback([document.body.clientWidth, document.body.clientHeight]);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [callback]);
+}
+
+const DOMComponent = ({ html, mainImage, onLayout }) => {
+  useSize(onLayout);
   const containerRef = useRef(null);
 
   useEffect(() => {
