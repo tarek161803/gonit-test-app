@@ -20,24 +20,24 @@
     "@react-navigation/bottom-tabs": "^7.0.0",
     "@react-navigation/native": "^7.0.0",
     "@reduxjs/toolkit": "^2.4.0",
-    "expo": "~52.0.20",
-    "expo-av": "~15.0.1",
-    "expo-blur": "~14.0.1",
+    "expo": "~52.0.26",
+    "expo-av": "~15.0.2",
+    "expo-blur": "~14.0.2",
     "expo-constants": "~17.0.3",
     "expo-font": "~13.0.1",
-    "expo-haptics": "~14.0.0",
-    "expo-linking": "~7.0.3",
-    "expo-router": "~4.0.15",
-    "expo-secure-store": "~14.0.0",
-    "expo-splash-screen": "~0.29.18",
-    "expo-status-bar": "~2.0.0",
-    "expo-symbols": "~0.2.0",
-    "expo-system-ui": "~4.0.6",
-    "expo-web-browser": "~14.0.1",
+    "expo-haptics": "~14.0.1",
+    "expo-linking": "~7.0.4",
+    "expo-router": "~4.0.17",
+    "expo-secure-store": "~14.0.1",
+    "expo-splash-screen": "~0.29.21",
+    "expo-status-bar": "~2.0.1",
+    "expo-symbols": "~0.2.1",
+    "expo-system-ui": "~4.0.7",
+    "expo-web-browser": "~14.0.2",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-katex": "^3.0.1",
-    "react-native": "0.76.5",
+    "react-native": "0.76.6",
     "react-native-element-dropdown": "^2.12.2",
     "react-native-gesture-handler": "~2.20.2",
     "react-native-reanimated": "~3.16.1",
@@ -56,10 +56,20 @@
     "eslint": "^8.57.0",
     "eslint-config-expo": "~8.0.1",
     "jest": "^29.2.1",
-    "jest-expo": "~52.0.2",
+    "jest-expo": "~52.0.3",
     "react-test-renderer": "18.3.1",
     "typescript": "^5.3.3"
   },
   "private": true,
-  "packageManager": "yarn@1.22.21+sha1.1959a18351b811cdeedbd484a8f86c3cc3bbaf72"
+  "packageManager": "yarn@1.22.21+sha1.1959a18351b811cdeedbd484a8f86c3cc3bbaf72",
+  "expo": {
+    "doctor": {
+      "reactNativeDirectoryCheck": {
+        "exclude": [
+          "react-katex",
+          "react-native-element-dropdown"
+        ]
+      }
+    }
+  }
 }
