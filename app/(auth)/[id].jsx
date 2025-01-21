@@ -16,11 +16,12 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
-import SingleQuestionItem from "../../components/SingleItem/SingleQuestionItem";
+
 import AnswerOptions from "../../components/SingleQuestionPage/AnswerOptions";
 import ExplanationView from "../../components/SingleQuestionPage/ExplanationView";
 import FooterButtons from "../../components/SingleQuestionPage/FooterButtons";
 import InfoBtnContainer from "../../components/SingleQuestionPage/InfoBtnContainer";
+import Question from "../../components/SingleQuestionPage/Question";
 import { useGetQuestionByIdQuery } from "../../redux/slices/question/questionApi";
 import { setQuestion } from "../../redux/slices/question/questionSlice";
 
@@ -113,7 +114,7 @@ const AnswersSection = () => {
               <Text style={{ fontSize: 16, marginBottom: 8, textAlign: "right", color: "#666666", fontWeight: "500" }}>
                 {question.serial}
               </Text>
-              <SingleQuestionItem question={question} />
+              <Question question={question} />
               <>
                 {showHint && (
                   <View ref={hintRef}>

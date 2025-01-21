@@ -1,10 +1,10 @@
 "use dom";
 import renderMathInElement from "katex/dist/contrib/auto-render";
 import "katex/dist/katex.min.css";
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import "../../styles/single-item.css";
 
-const DOMComponent = ({ setHeight, html, mainImage }) => {
+const DOMComponent = ({ html, mainImage }) => {
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -20,20 +20,12 @@ const DOMComponent = ({ setHeight, html, mainImage }) => {
     }
   }, [containerRef.current, html]);
 
-  useLayoutEffect(() => {
-    const height = containerRef.current.getBoundingClientRect().height;
-    setHeight(height);
-  }, [containerRef]);
-
   return (
     <div className="content" ref={containerRef}>
       <div dangerouslySetInnerHTML={{ __html: html }} />
       {mainImage && (
         <div className="main-image-container">
           <img
-            onLoad={() => {
-              setHeight(containerRef.current.getBoundingClientRect().height);
-            }}
             className="main-image"
             src={`data:image/svg+xml;utf8,${encodeURIComponent(mainImage)}`}
             alt="main-image"

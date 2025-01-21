@@ -1,19 +1,19 @@
-import React, { useState } from "react";
+import React from "react";
 import { View } from "react-native";
 import useQuestionWithLatexAndImage from "../../hooks/useQuestionWithLatexAndImage";
-import DOMComponent from "../SingleItem/DOMComponent";
+import DOMComponent from "./DOMComponent";
 
 const ExplanationView = ({ question }) => {
-  const [height, setHeight] = useState("100%");
   const html = useQuestionWithLatexAndImage(question?.explanation, question?.images, question?.latex);
 
   return (
-    <View style={{ height: height ? height + 16 : 0 }}>
+    <View>
       <DOMComponent
         dom={{
           PointerEvent: "none",
+          scrollEnabled: false,
+          matchContents: true,
         }}
-        setHeight={setHeight}
         html={html}
         mainImage={question.explanationImage}
       />

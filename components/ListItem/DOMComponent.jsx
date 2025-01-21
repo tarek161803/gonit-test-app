@@ -4,7 +4,7 @@ import "katex/dist/katex.min.css";
 import { useEffect, useRef } from "react";
 import "../../styles/list-item.css";
 
-const DOMComponent = ({ setHeight, html }) => {
+const DOMComponent = ({ html }) => {
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -19,11 +19,6 @@ const DOMComponent = ({ setHeight, html }) => {
       });
     }
   }, [containerRef.current, html]);
-
-  useEffect(() => {
-    const height = containerRef.current.getBoundingClientRect().height;
-    setHeight(height);
-  }, [containerRef]);
 
   return <div className="content" dangerouslySetInnerHTML={{ __html: html }} ref={containerRef} />;
 };
