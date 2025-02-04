@@ -5,14 +5,14 @@ import useQuestionWithLatexAndImage from "../../hooks/useQuestionWithLatexAndIma
 import DOMComponent from "./DOMComponent";
 
 const Question = ({ question }) => {
-  const [height, setHeight] = useState(200);
+  const [height, setHeight] = useState(100);
   const questionHtml = useQuestionWithLatexAndImage(question.question, question.images, question.latex);
 
   return (
     <View>
       <DOMComponent
         onLayout={async (size) => {
-          if (size[1] !== height) {
+          if (size[1] !== height + 5 || size[1] !== height - 5) {
             setHeight(size[1]);
           }
         }}

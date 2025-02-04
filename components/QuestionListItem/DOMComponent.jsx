@@ -7,7 +7,27 @@ import "../../styles/katex-latex.css";
 import "../../styles/list-question.css";
 import "../../styles/loto-font-family.css";
 
-const DOMComponent = ({ html }) => {
+function useSize(callback) {
+  useEffect(() => {
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const { width, height } = entry.contentRect;
+        callback([width, height]);
+      }
+    });
+
+    observer.observe(document.body);
+
+    callback([document.body.clientWidth, document.body.clientHeight]);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [callback]);
+}
+
+const DOMComponent = ({ html, onLayout }) => {
+  useSize(onLayout);
   const containerRef = useRef(null);
 
   useEffect(() => {
