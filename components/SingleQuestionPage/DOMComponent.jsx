@@ -1,8 +1,9 @@
 "use dom";
 import renderMathInElement from "katex/dist/contrib/auto-render";
-import "katex/dist/katex.min.css";
 import { useEffect, useRef } from "react";
-import "../../styles/single-item.css";
+import "../../styles/katex-latex.css";
+import "../../styles/loto-font-family.css";
+import "../../styles/single-question.css";
 
 function useSize(callback) {
   useEffect(() => {

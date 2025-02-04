@@ -21,9 +21,11 @@ const Question = ({ question }) => {
           scrollEnabled: false,
           style: { height },
         }}
-        html={questionHtml}
+        html={questionHtml.replace(/<br>/g, "<div class='line-break'></div>")}
         mainImage={question.image}
       />
+
+      <View />
     </View>
   );
 };

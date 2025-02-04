@@ -1,8 +1,10 @@
 "use dom";
 import renderMathInElement from "katex/dist/contrib/auto-render";
-import "katex/dist/katex.min.css";
+
 import { useEffect, useRef } from "react";
-import "../../styles/list-item.css";
+import "../../styles/katex-latex.css";
+import "../../styles/list-question.css";
+import "../../styles/loto-font-family.css";
 
 const DOMComponent = ({ html }) => {
   const containerRef = useRef(null);
