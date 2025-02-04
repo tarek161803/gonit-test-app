@@ -1,6 +1,7 @@
 "use dom";
 import renderMathInElement from "katex/dist/contrib/auto-render";
 import { useEffect, useRef } from "react";
+import "../../styles/katex-font.css";
 import "../../styles/katex-latex.css";
 import "../../styles/loto-font-family.css";
 import "../../styles/single-question.css";
