@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "GonitPreview",
-    "slug": "GonitPreview",
+    "name": "Gonit Preview",
+    "slug": "gonit-preview",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
