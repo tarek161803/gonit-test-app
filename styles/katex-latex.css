@@ -3,7 +3,7 @@
   line-height: 1.2;
   text-indent: 0;
   text-rendering: auto;
-  font-weight: 600;
+  font-weight: inherit;
 }
 .katex * {
   -ms-high-contrast-adjust: none !important;

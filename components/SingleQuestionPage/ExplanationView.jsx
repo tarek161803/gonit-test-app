@@ -8,7 +8,7 @@ const ExplanationView = ({ question }) => {
   const html = useQuestionWithLatexAndImage(question?.explanation, question?.images, question?.latex);
 
   return (
-    <View>
+    <View style={{ marginTop: 10 }}>
       <DOMComponent
         onLayout={async (size) => {
           if (size[1] !== height) {
@@ -20,7 +20,7 @@ const ExplanationView = ({ question }) => {
           scrollEnabled: false,
           style: { height },
         }}
-        html={html}
+        html={html.replace(/<br>/g, "<div class='line-break'></div>")}
         mainImage={question.explanationImage}
       />
     </View>
