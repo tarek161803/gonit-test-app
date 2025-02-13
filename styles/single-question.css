@@ -79,7 +79,9 @@ table th {
 
 .main-image-container {
   margin-top: 10px;
-  background-color: "red";
+}
+.question-extra-1 {
+  margin-top: 10px;
 }
 
 .main-image {

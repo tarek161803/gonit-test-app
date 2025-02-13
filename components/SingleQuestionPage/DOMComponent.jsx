@@ -25,7 +25,7 @@ function useSize(callback) {
   }, [callback]);
 }
 
-const DOMComponent = ({ html, mainImage, onLayout }) => {
+const DOMComponent = ({ html, questionExtra1Html, mainImage, onLayout }) => {
   useSize(onLayout);
   const containerRef = useRef(null);
 
@@ -52,6 +52,11 @@ const DOMComponent = ({ html, mainImage, onLayout }) => {
             src={`data:image/svg+xml;utf8,${encodeURIComponent(mainImage)}`}
             alt="main-image"
           />
+        </div>
+      )}
+      {questionExtra1Html && (
+        <div className="question-extra-1">
+          <div dangerouslySetInnerHTML={{ __html: questionExtra1Html }} />
         </div>
       )}
     </div>

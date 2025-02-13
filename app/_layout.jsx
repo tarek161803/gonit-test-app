@@ -26,8 +26,7 @@ const InitialLayout = () => {
       } else {
         router.replace("login");
       }
-    } catch (err) {
-      console.log(err);
+    } catch {
       Alert.alert("Something Went Wrong!", "Please try again later.");
     }
   };

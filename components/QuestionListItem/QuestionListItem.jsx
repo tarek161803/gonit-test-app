@@ -11,8 +11,6 @@ const QuestionListItem = ({ question }) => {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  console.log(height);
-
   const questionHtml = useQuestionWithLatexAndImage(question.question, question.images, question.latex);
   return (
     <Pressable
