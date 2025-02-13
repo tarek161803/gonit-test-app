@@ -44,7 +44,7 @@ const DOMComponent = ({ html, questionExtra1Html, mainImage, onLayout }) => {
 
   return (
     <div className="content" ref={containerRef}>
-      <div dangerouslySetInnerHTML={{ __html: html }} />
+      {html && <div dangerouslySetInnerHTML={{ __html: html }} />}
       {mainImage && (
         <div className="main-image-container">
           <img
