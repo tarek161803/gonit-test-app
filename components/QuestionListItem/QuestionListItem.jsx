@@ -33,7 +33,7 @@ const QuestionListItem = ({ question }) => {
           scrollEnabled: false,
           style: { height },
         }}
-        html={questionHtml.replace(/<br>/g, "<div class='line-break'></div>")}
+        html={questionHtml.replace(/<br>/g, "<span class='line-break'></span>")}
       />
     </Pressable>
   );

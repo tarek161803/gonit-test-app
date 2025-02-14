@@ -26,8 +26,8 @@ const Question = ({ question }) => {
           scrollEnabled: false,
           style: { height },
         }}
-        html={questionHtml.replace(/<br>/g, "<div class='line-break'></div>")}
-        questionExtra1Html={questionExtra1Html.replace(/<br>/g, "<div class='line-break'></div>")}
+        html={questionHtml.replace(/<br>/g, "<span class='line-break'></span>")}
+        questionExtra1Html={questionExtra1Html.replace(/<br>/g, "<span class='line-break'></span>")}
         mainImage={question.image}
       />
 

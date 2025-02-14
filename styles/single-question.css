@@ -75,6 +75,7 @@ table th {
 }
 .line-break {
   height: 14px;
+  display: block;
 }
 
 .main-image-container {
