@@ -12,6 +12,8 @@ const QuestionListItem = ({ question }) => {
   const router = useRouter();
 
   const questionHtml = useQuestionWithLatexAndImage(question.question, question.images, question.latex);
+  const questionExtra1Html = useQuestionWithLatexAndImage(question.questionExtra1, question.images, question.latex);
+
   return (
     <Pressable
       onPress={() => {
@@ -34,6 +36,7 @@ const QuestionListItem = ({ question }) => {
           style: { height },
         }}
         html={questionHtml.replace(/<br>/g, "<span class='line-break'></span>")}
+        questionExtra1Html={questionExtra1Html.replace(/<br>/g, "<span class='line-break'></span>")}
       />
     </Pressable>
   );

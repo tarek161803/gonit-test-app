@@ -122,6 +122,7 @@ const Home = () => {
                       </Text>
                       <QuestionListItem question={question} />
                       <View style={styles.questionBadge}>
+                        <Text style={styles.questionBadgeText}>{question.difficulty}</Text>
                         <Text style={styles.questionBadgeText}>{question.status}</Text>
                       </View>
                     </View>
@@ -232,20 +233,21 @@ const styles = StyleSheet.create({
   },
   serialLabel: { fontWeight: "600" },
   questionBadge: {
-    flex: 1,
     position: "absolute",
+    gap: 8,
+    flexDirection: "row",
+    justifyContent: "flex-end",
     top: 12,
     right: -4,
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    backgroundColor: "#faf4ef",
-    borderRadius: 4,
-    boxShadow: "0 0 5 0 #00000021",
   },
   questionBadgeText: {
-    flex: 1,
     fontSize: 14,
-    color: "#333",
+    color: "#000000",
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    backgroundColor: "#dddddd",
+    borderRadius: 4,
+    boxShadow: "0 0 3 0 #00000021",
   },
   pageSearchContainer: {
     width: "100%",

@@ -26,7 +26,7 @@ function useSize(callback) {
   }, [callback]);
 }
 
-const DOMComponent = ({ html, onLayout }) => {
+const DOMComponent = ({ html, onLayout, questionExtra1Html }) => {
   useSize(onLayout);
   const containerRef = useRef(null);
 
@@ -43,7 +43,16 @@ const DOMComponent = ({ html, onLayout }) => {
     }
   }, [containerRef.current, html]);
 
-  return <div className="content" dangerouslySetInnerHTML={{ __html: html }} ref={containerRef} />;
+  return (
+    <div className="content">
+      <div dangerouslySetInnerHTML={{ __html: html }} ref={containerRef} />
+      {questionExtra1Html && (
+        <div className="question-extra-1">
+          <div dangerouslySetInnerHTML={{ __html: questionExtra1Html }} />
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default DOMComponent;

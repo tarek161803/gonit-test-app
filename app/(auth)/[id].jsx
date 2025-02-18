@@ -111,9 +111,13 @@ const AnswersSection = () => {
             refreshControl={<RefreshControl refreshing={isLoading} onRefresh={handleRefresh} />}
             contentContainerStyle={{ backgroundColor: "#FBF8F6", flexGrow: 1 }}>
             <View style={{ flex: 1, marginVertical: 12, paddingHorizontal: 16, paddingBottom: 70 }}>
-              <Text style={{ fontSize: 16, marginBottom: 8, textAlign: "right", color: "#666666", fontWeight: "500" }}>
-                {question.serial}
-              </Text>
+              <View style={styles.stats}>
+                <View style={{ flexDirection: "row", gap: 10 }}>
+                  <Text style={styles.statsText}>{question.status}</Text>
+                  <Text style={styles.statsText}>{question.difficulty}</Text>
+                </View>
+                <Text style={styles.statsText}>{question.serial}</Text>
+              </View>
               <Question question={question} />
               <>
                 {showHint && (
@@ -208,5 +212,23 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginTop: 6,
     color: "#342618",
+  },
+
+  stats: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 6,
+  },
+
+  statsText: {
+    fontSize: 16,
+    marginBottom: 8,
+    color: "#ffffff",
+    fontWeight: "500",
+    backgroundColor: "#444444",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
   },
 });
