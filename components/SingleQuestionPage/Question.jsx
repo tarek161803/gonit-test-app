@@ -9,8 +9,8 @@ const Question = ({ question }) => {
   const questionHtml = useQuestionWithLatexAndImage(question.question, question.images, question.latex);
   const questionExtra1Html = useQuestionWithLatexAndImage(
     question.questionExtra1 || "",
-    question.imagesExtra1,
-    question.latexExtra1
+    question.images,
+    question.latex
   );
 
   return (

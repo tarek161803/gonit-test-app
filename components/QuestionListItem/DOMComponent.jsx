@@ -44,8 +44,8 @@ const DOMComponent = ({ html, onLayout, questionExtra1Html }) => {
   }, [containerRef.current, html]);
 
   return (
-    <div className="content">
-      <div dangerouslySetInnerHTML={{ __html: html }} ref={containerRef} />
+    <div className="content" ref={containerRef}>
+      <div dangerouslySetInnerHTML={{ __html: html }} />
       {questionExtra1Html && (
         <div className="question-extra-1">
           <div dangerouslySetInnerHTML={{ __html: questionExtra1Html }} />
