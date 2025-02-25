@@ -35,6 +35,7 @@ const Login = () => {
 
     try {
       const response = await loginUser({ email, password }).unwrap();
+      console.log(response);
       if (response.status === "success") {
         await SecureStore.setItemAsync("user", JSON.stringify(response.user));
         await SecureStore.setItemAsync("token", response.token);

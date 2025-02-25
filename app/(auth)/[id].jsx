@@ -18,7 +18,8 @@ import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
 
 import AnswerOptions from "../../components/SingleQuestionPage/AnswerOptions";
-import ExplanationView from "../../components/SingleQuestionPage/ExplanationView";
+
+import ExplanationView from "../../components/SingleQuestionPage/Explanation/ExplanationView";
 import FooterButtons from "../../components/SingleQuestionPage/FooterButtons";
 import InfoBtnContainer from "../../components/SingleQuestionPage/InfoBtnContainer";
 import Question from "../../components/SingleQuestionPage/Question";
