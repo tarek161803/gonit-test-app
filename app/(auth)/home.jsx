@@ -20,7 +20,9 @@ import { useDispatch, useSelector } from "react-redux";
 
 import CategoryFilter from "../../components/QuestionFilter/CategoryFilter";
 import DifficultyFilter from "../../components/QuestionFilter/DifficultyFilter";
+import ExplanationFiler from "../../components/QuestionFilter/ExplanationFilter";
 import GradeFilter from "../../components/QuestionFilter/GradeFilter";
+import HintFilter from "../../components/QuestionFilter/HintFiler";
 import StatusFilter from "../../components/QuestionFilter/StatusFilter";
 import QuestionListItem from "../../components/QuestionListItem/QuestionListItem";
 import COLORS from "../../constants/Colors";
@@ -104,6 +106,11 @@ const Home = () => {
         <View style={{ flexDirection: "row", gap: 12 }}>
           <CategoryFilter />
           <StatusFilter />
+        </View>
+
+        <View style={{ flexDirection: "row", gap: 12 }}>
+          <HintFilter />
+          <ExplanationFiler />
         </View>
 
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()} accessible={false}>
