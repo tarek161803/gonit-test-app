@@ -25,7 +25,7 @@ function useSize(callback) {
   }, [callback]);
 }
 
-const DOMComponent = ({ html, questionExtra1Html, mainImage, onLayout }) => {
+const DOMComponent = ({ html, questionExtra1Html, mainImage, onLayout, mainLatex }) => {
   useSize(onLayout);
   const containerRef = useRef(null);
 
@@ -54,6 +54,7 @@ const DOMComponent = ({ html, questionExtra1Html, mainImage, onLayout }) => {
           />
         </div>
       )}
+      {mainLatex && <div className="main-latex" dangerouslySetInnerHTML={{ __html: `€€${mainLatex}€€` }} />}
       {questionExtra1Html && (
         <div className="question-extra-1">
           <div dangerouslySetInnerHTML={{ __html: questionExtra1Html }} />

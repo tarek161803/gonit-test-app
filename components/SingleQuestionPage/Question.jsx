@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 import { View } from "react-native";
 import useQuestionWithLatexAndImage from "../../hooks/useQuestionWithLatexAndImage";
@@ -26,6 +26,7 @@ const Question = ({ question }) => {
           scrollEnabled: false,
           style: { height },
         }}
+        mainLatex={question?.mainLatex}
         html={questionHtml.replace(/<br>/g, "<span class='line-break'></span>")}
         questionExtra1Html={questionExtra1Html.replace(/<br>/g, "<span class='line-break'></span>")}
         mainImage={question.image}
