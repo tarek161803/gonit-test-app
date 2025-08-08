@@ -29,7 +29,7 @@ const Question = ({ question }) => {
         mainLatex={question?.mainLatex}
         html={questionHtml.replace(/<br>/g, "<span class='line-break'></span>")}
         questionExtra1Html={questionExtra1Html.replace(/<br>/g, "<span class='line-break'></span>")}
-        mainImage={question.imageUrl}
+        mainImage={question?.imageUrl}
       />
 
       <View />

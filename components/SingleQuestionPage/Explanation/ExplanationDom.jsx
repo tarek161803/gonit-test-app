@@ -1,6 +1,6 @@
 "use dom";
 import renderMathInElement from "katex/dist/contrib/auto-render";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import "../../../styles/katex-font.css";
 import "../../../styles/katex-latex.css";
 import "../../../styles/loto-font-family.css";
@@ -28,6 +28,7 @@ function useSize(callback) {
 const ExplanationDom = ({ html, explanationExtra1, mainImage, onLayout }) => {
   useSize(onLayout);
   const containerRef = useRef(null);
+  const [randomVersion, setRandomVersion] = useState();
 
   useEffect(() => {
     if (containerRef.current) {
@@ -42,13 +43,17 @@ const ExplanationDom = ({ html, explanationExtra1, mainImage, onLayout }) => {
     }
   }, [containerRef.current, html]);
 
+  useEffect(() => {
+    setRandomVersion(Date.now());
+  }, []);
+
   return (
     <div className="content" ref={containerRef}>
       {html && <div dangerouslySetInnerHTML={{ __html: html }} />}
 
       {mainImage && (
         <div className="main-image-container">
-          <img className="main-image" src={mainImage + "?v=123"} alt="main-image" />
+          <img className="main-image" src={mainImage + "?v=" + randomVersion} alt="main-image" />
         </div>
       )}
       {explanationExtra1 && (

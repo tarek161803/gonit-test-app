@@ -17,8 +17,9 @@ const ExplanationView = ({ question }) => {
     <View style={{ marginTop: 10 }}>
       <ExplanationDom
         onLayout={async (size) => {
-          if (size[1] !== height) {
+          if (size[1] !== height + 5 || size[1] !== height - 5) {
             setHeight(size[1]);
+            console.log("object");
           }
         }}
         dom={{

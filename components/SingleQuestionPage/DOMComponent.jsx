@@ -42,12 +42,14 @@ const DOMComponent = ({ html, questionExtra1Html, mainImage, onLayout, mainLatex
     }
   }, [containerRef.current, html]);
 
+  const randomVersion = Date.now();
+
   return (
     <div className="content" ref={containerRef}>
       {html && <div dangerouslySetInnerHTML={{ __html: html }} />}
       {mainImage && (
         <div className="main-image-container">
-          <img className="main-image" src={mainImage + "?v=123"} alt="main-image" />
+          <img className="main-image" src={mainImage + "?v=" + randomVersion} alt="main-image" />
         </div>
       )}
       {mainLatex && <div className="main-latex" dangerouslySetInnerHTML={{ __html: `€€${mainLatex}€€` }} />}
