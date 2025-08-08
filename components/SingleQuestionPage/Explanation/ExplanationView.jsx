@@ -1,14 +1,15 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { View } from "react-native";
 import useQuestionWithLatexAndImage from "../../../hooks/useQuestionWithLatexAndImage";
 import ExplanationDom from "./ExplanationDom";
 
 const ExplanationView = ({ question }) => {
   const [height, setHeight] = useState(200);
-  const explanation = useQuestionWithLatexAndImage(question?.explanation, question?.images, question?.latex);
+  let html = useQuestionWithLatexAndImage(question?.explanation, question?.imageUrls, question?.latex);
+
   const explanationExtra1 = useQuestionWithLatexAndImage(
-    question?.explanationExtra1,
-    question?.images,
+    question?.explanationExtra1 || "",
+    question?.imageUrls,
     question?.latex
   );
 
@@ -25,9 +26,9 @@ const ExplanationView = ({ question }) => {
           scrollEnabled: false,
           style: { height },
         }}
-        html={explanation.replace(/<br>/g, "<div class='line-break'></div>")}
+        html={html.replace(/<br>/g, "<div class='line-break'></div>")}
         explanationExtra1={explanationExtra1.replace(/<br>/g, "<div class='line-break'></div>")}
-        mainImage={question.explanationImage}
+        mainImage={question.explanationImageUrl}
       />
     </View>
   );

@@ -45,13 +45,10 @@ const ExplanationDom = ({ html, explanationExtra1, mainImage, onLayout }) => {
   return (
     <div className="content" ref={containerRef}>
       {html && <div dangerouslySetInnerHTML={{ __html: html }} />}
+
       {mainImage && (
         <div className="main-image-container">
-          <img
-            className="main-image"
-            src={`data:image/svg+xml;utf8,${encodeURIComponent(mainImage)}`}
-            alt="main-image"
-          />
+          <img className="main-image" src={mainImage + "?v=123"} alt="main-image" />
         </div>
       )}
       {explanationExtra1 && (

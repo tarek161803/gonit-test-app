@@ -47,11 +47,7 @@ const DOMComponent = ({ html, questionExtra1Html, mainImage, onLayout, mainLatex
       {html && <div dangerouslySetInnerHTML={{ __html: html }} />}
       {mainImage && (
         <div className="main-image-container">
-          <img
-            className="main-image"
-            src={`data:image/svg+xml;utf8,${encodeURIComponent(mainImage)}`}
-            alt="main-image"
-          />
+          <img className="main-image" src={mainImage + "?v=123"} alt="main-image" />
         </div>
       )}
       {mainLatex && <div className="main-latex" dangerouslySetInnerHTML={{ __html: `€€${mainLatex}€€` }} />}

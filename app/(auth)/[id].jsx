@@ -210,7 +210,9 @@ const styles = StyleSheet.create({
   },
 
   hintText: {
-    fontSize: 18,
+    fontFamily: "Lato",
+    lineHeight: 28,
+    fontSize: 20,
     marginTop: 6,
     color: "#342618",
   },

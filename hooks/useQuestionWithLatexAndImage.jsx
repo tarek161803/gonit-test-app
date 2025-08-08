@@ -9,9 +9,7 @@ const useQuestionWithLatexAndImage = (question, images, latex = []) => {
     return question.replace(/{(img|lat)(\d+)}/g, (match, type, index) => {
       const parsedIndex = parseInt(index, 10) - 1;
       if (type === "img") {
-        return `<img src="data:image/svg+xml;utf8,${encodeURIComponent(
-          images[parsedIndex]
-        )}" alt="image-${parsedIndex}" />`;
+        return `<img src="${images[parsedIndex]}?v=123" alt="image-${parsedIndex}" />`;
       }
       if (type === "lat") {
         return latex[parsedIndex] || "";

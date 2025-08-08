@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Pressable } from "react-native";
 import { useDispatch } from "react-redux";
 import useQuestionWithLatexAndImage from "../../hooks/useQuestionWithLatexAndImage";
@@ -11,8 +11,8 @@ const QuestionListItem = ({ question }) => {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const questionHtml = useQuestionWithLatexAndImage(question.question, question.images, question.latex);
-  const questionExtra1Html = useQuestionWithLatexAndImage(question.questionExtra1, question.images, question.latex);
+  const questionHtml = useQuestionWithLatexAndImage(question.question, question.imageUrls, question.latex);
+  const questionExtra1Html = useQuestionWithLatexAndImage(question.questionExtra1, question.imageUrls, question.latex);
 
   return (
     <Pressable

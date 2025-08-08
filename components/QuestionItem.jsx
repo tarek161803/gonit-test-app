@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Pressable } from "react-native";
 import { WebView } from "react-native-webview";
 import { useDispatch } from "react-redux";
@@ -108,7 +108,7 @@ const renderHtml = (htmlContent) => {
 const QuestionItem = ({ question }) => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const htmlContent = useQuestionWithLatexAndImage(question.question, question.images, question.latex);
+  const htmlContent = useQuestionWithLatexAndImage(question.question, question.imageUrls, question.latex);
   const [webViewHeights, setWebViewHeights] = useState({});
 
   const handleWebViewMessage = (event, questionId) => {

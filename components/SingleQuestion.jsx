@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { View } from "react-native";
 import { WebView } from "react-native-webview";
 import useQuestionWithLatexAndImage from "../hooks/useQuestionWithLatexAndImage";
@@ -117,7 +117,7 @@ const renderHtml = (htmlContent, mainImage) => {
 };
 
 const SingleQuestion = ({ question }) => {
-  const htmlContent = useQuestionWithLatexAndImage(question.question, question.images, question.latex);
+  const htmlContent = useQuestionWithLatexAndImage(question.question, question.imageUrls, question.latex);
   const [webViewHeights, setWebViewHeights] = useState();
   const webViewRef = useRef(null);
   const handleWebViewMessage = (event) => {

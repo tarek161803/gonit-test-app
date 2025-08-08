@@ -6,10 +6,10 @@ import DOMComponent from "./DOMComponent";
 
 const Question = ({ question }) => {
   const [height, setHeight] = useState(100);
-  const questionHtml = useQuestionWithLatexAndImage(question.question, question.images, question.latex);
+  const questionHtml = useQuestionWithLatexAndImage(question.question, question.imageUrls, question.latex);
   const questionExtra1Html = useQuestionWithLatexAndImage(
     question.questionExtra1 || "",
-    question.images,
+    question.imageUrls,
     question.latex
   );
 
@@ -29,7 +29,7 @@ const Question = ({ question }) => {
         mainLatex={question?.mainLatex}
         html={questionHtml.replace(/<br>/g, "<span class='line-break'></span>")}
         questionExtra1Html={questionExtra1Html.replace(/<br>/g, "<span class='line-break'></span>")}
-        mainImage={question.image}
+        mainImage={question.imageUrl}
       />
 
       <View />
