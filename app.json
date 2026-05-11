@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Gonit Preview",
-    "slug": "GonitPreview",
+    "slug": "gonit-preview",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -18,7 +18,11 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.webappick.gonitpreview"
+      "package": "com.webappick.gonitpreview",
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -53,7 +57,10 @@
     },
     "extra": {
       "eas": {
-        "projectId": "9e920c6e-4e88-4d72-8b97-21bc88032ba6"
+        "projectId": "90cf5fcc-8d18-49bc-9e9a-d7776c067dfa"
+      },
+      "router": {
+        "origin": false
       }
     }
   }
