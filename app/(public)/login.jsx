@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useState } from "react";
@@ -21,10 +22,11 @@ import { useLoginMutation } from "../../redux/slices/auth/authApi";
 import { setUserInfo } from "../../redux/slices/auth/authSlice";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const router = useRouter();
+  const [isPasswordVisible, setIsPasswordVisible] = useState(true);
   const [loginUser, { isLoading }] = useLoginMutation();
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const router = useRouter();
   const dispatch = useDispatch();
 
   const handleLogin = async () => {
@@ -52,9 +54,13 @@ const Login = () => {
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : undefined}
       style={{ flex: 1 }}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}>
+      keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
+    >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
+        >
           <View style={styles.container}>
             <View>
               <Text style={styles.label}>Your Email</Text>
@@ -72,13 +78,24 @@ const Login = () => {
                 value={password}
                 onChangeText={setPassword}
                 style={styles.input}
-                secureTextEntry
+                secureTextEntry={isPasswordVisible}
                 placeholder="Password"
+              />
+              <Ionicons
+                onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+                style={styles.passwordIcon}
+                name={isPasswordVisible ? "eye-off" : "eye"}
+                size={24}
+                color="#333333ff"
               />
             </View>
             <View style={{ marginTop: 20 }}>
               <Pressable style={styles.loginBtn} onPress={handleLogin}>
-                {isLoading ? <ActivityIndicator color="white" /> : <Text style={styles.loginBtnText}>LOGIN</Text>}
+                {isLoading ? (
+                  <ActivityIndicator color="white" />
+                ) : (
+                  <Text style={styles.loginBtnText}>LOGIN</Text>
+                )}
               </Pressable>
             </View>
           </View>
@@ -108,6 +125,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 8,
     fontSize: 16,
+  },
+  passwordIcon: {
+    position: "absolute",
+    top: "50%",
+    right: 20,
   },
   loginBtn: {
     backgroundColor: COLORS.primary,
