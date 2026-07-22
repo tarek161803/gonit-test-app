@@ -15,7 +15,8 @@ img {
   object-fit: contain;
   margin: 6px 0px;
 }
-p {
+p,
+li {
   font-size: 20px;
   line-height: 1.4;
   color: #342618;

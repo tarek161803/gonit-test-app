@@ -27,7 +27,8 @@ import StatusFilter from "../../components/QuestionFilter/StatusFilter";
 import QuestionListItem from "../../components/QuestionListItem/QuestionListItem";
 import COLORS from "../../constants/Colors";
 import { useGetQuestionsQuery } from "../../redux/slices/question/questionApi";
-import { updateQuestionQuery } from "../../redux/slices/question/questionSlice";
+import { resetQuestionQuery, updateQuestionQuery } from "../../redux/slices/question/questionSlice";
+import { deleteSecureItem, getSecureItem, SECURE_STORE_KEYS, setSecureItem } from "../../utils/secureStore";
 import { buildQuery } from "../../utils/utils";
 
 const Home = () => {
@@ -36,10 +37,19 @@ const Home = () => {
 
   const [inputPage, setInputPage] = useState(1);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const [isQueryHydrated, setIsQueryHydrated] = useState(false);
 
-  const { data, isLoading, refetch, isFetching } = useGetQuestionsQuery(buildQuery(query));
+  const { data, isLoading, refetch, isFetching } = useGetQuestionsQuery(buildQuery(query), { skip: !isQueryHydrated });
   const [searchQuery, setSearchQuery] = useState("");
   const handleRefresh = () => refetch();
+
+  const handleReset = async () => {
+    Keyboard.dismiss();
+    dispatch(resetQuestionQuery());
+    setSearchQuery("");
+    setInputPage(1);
+    await deleteSecureItem(SECURE_STORE_KEYS.QUESTION_QUERY);
+  };
 
   const handlePageChange = () => {
     Keyboard.dismiss();
@@ -58,6 +68,23 @@ const Home = () => {
       dispatch(updateQuestionQuery({ search: searchQuery }));
     }
   }, [searchQuery]);
+
+  useEffect(() => {
+    (async () => {
+      const saved = await getSecureItem(SECURE_STORE_KEYS.QUESTION_QUERY);
+      if (saved && typeof saved === "object") {
+        dispatch(updateQuestionQuery(saved));
+        if (saved.search) setSearchQuery(saved.search);
+        if (saved.page) setInputPage(saved.page);
+      }
+      setIsQueryHydrated(true);
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (!isQueryHydrated) return;
+    setSecureItem(SECURE_STORE_KEYS.QUESTION_QUERY, query);
+  }, [query, isQueryHydrated]);
 
   useEffect(() => {
     setInputPage(query.page);
@@ -95,6 +122,9 @@ const Home = () => {
           />
           <Pressable onPress={handleSearch} style={styles.searchButton}>
             <Text style={styles.searchButtonText}>Search</Text>
+          </Pressable>
+          <Pressable onPress={handleReset} style={styles.resetButton}>
+            <Text style={styles.resetButtonText}>Reset</Text>
           </Pressable>
         </View>
 
@@ -223,6 +253,16 @@ const styles = StyleSheet.create({
   },
   searchButtonText: {
     color: "#ffffff",
+    fontSize: 16,
+  },
+  resetButton: {
+    backgroundColor: "#e9e9e9",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  resetButtonText: {
+    color: "#121212",
     fontSize: 16,
   },
   questionsContainer: {

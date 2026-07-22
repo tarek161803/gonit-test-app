@@ -1,18 +1,20 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+export const initialQuestionQuery = {
+  category: "",
+  status: "",
+  grade: "",
+  difficulty: "",
+  search: "",
+  hint: "",
+  explanation: "",
+  per_page: "10",
+  page: 1,
+  sort: "desc",
+};
+
 const initialState = {
-  query: {
-    category: "",
-    status: "",
-    grade: "",
-    difficulty: "",
-    search: "",
-    hint: "",
-    explanation: "",
-    per_page: "10",
-    page: 1,
-    sort: "desc",
-  },
+  query: initialQuestionQuery,
   question: {},
 };
 
@@ -24,11 +26,15 @@ const questionSlice = createSlice({
       state.query = { ...state.query, ...action.payload };
     },
 
+    resetQuestionQuery: (state) => {
+      state.query = initialQuestionQuery;
+    },
+
     setQuestion: (state, action) => {
       state.question = action.payload;
     },
   },
 });
 
-export const { updateQuestionQuery, setQuestion } = questionSlice.actions;
+export const { updateQuestionQuery, resetQuestionQuery, setQuestion } = questionSlice.actions;
 export default questionSlice.reducer;
