@@ -7,8 +7,10 @@ import COLORS from "../../constants/Colors";
 
 const AnswerOptions = () => {
   const [sound, setSound] = useState();
+  const { soundEnabled } = useSelector((state) => state.settings);
 
   async function playSound(selectedSound) {
+    if (!soundEnabled) return;
     const { sound } = await Audio.Sound.createAsync(selectedSound);
     setSound(sound);
     await sound.playAsync();
@@ -30,8 +32,11 @@ const AnswerOptions = () => {
   const { question } = useSelector((state) => state.question);
 
   const answerOptions = useMemo(
-    () => [...question.wrongAnswers, question.answer].sort(() => Math.random() - 0.5),
-    [question]
+    () =>
+      [...question.wrongAnswers, question.answer].sort(
+        () => Math.random() - 0.5,
+      ),
+    [question],
   );
 
   useEffect(() => {
@@ -61,13 +66,30 @@ const AnswerOptions = () => {
   const renderOptions = () => {
     if (answerOptions.every((option) => option.length === 1)) {
       return (
-        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 20, marginBottom: 20 }}>
+        <View
+          style={{
+            flexDirection: "row",
+            flexWrap: "wrap",
+            gap: 20,
+            marginBottom: 20,
+          }}
+        >
           {answerOptions.sort().map((option, index) => (
             <Pressable
               key={index}
               onPress={() => handleCheckAnswer(option)}
-              style={[styles.answerOption, userAnswer === option && answerStyle, { flex: 1 }]}>
-              <Text style={[styles.answerText, { color: userAnswer === option ? "#ffffff" : "#333333" }]}>
+              style={[
+                styles.answerOption,
+                userAnswer === option && answerStyle,
+                { flex: 1 },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.answerText,
+                  { color: userAnswer === option ? "#ffffff" : "#333333" },
+                ]}
+              >
                 {option}
               </Text>
             </Pressable>
@@ -84,13 +106,18 @@ const AnswerOptions = () => {
               <Pressable
                 key={index}
                 onPress={() => handleCheckAnswer(option)}
-                style={[styles.answerOption, userAnswer === option && answerStyle]}>
+                style={[
+                  styles.answerOption,
+                  userAnswer === option && answerStyle,
+                ]}
+              >
                 <Text
                   style={[
                     styles.answerText,
                     { fontSize: 20 },
                     { color: userAnswer === option ? "#ffffff" : "#333333" },
-                  ]}>
+                  ]}
+                >
                   {option}
                 </Text>
               </Pressable>
@@ -100,13 +127,32 @@ const AnswerOptions = () => {
     }
 
     return (
-      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 20, marginBottom: 20 }}>
+      <View
+        style={{
+          flexDirection: "row",
+          flexWrap: "wrap",
+          gap: 20,
+          marginBottom: 20,
+        }}
+      >
         {answerOptions.map((option, index) => (
           <Pressable
             key={index}
             onPress={() => handleCheckAnswer(option)}
-            style={[styles.answerOption, userAnswer === option && answerStyle, { width: (width - 52) / 2 }]}>
-            <Text style={[styles.answerText, { color: userAnswer === option ? "#ffffff" : "#333333" }]}>{option}</Text>
+            style={[
+              styles.answerOption,
+              userAnswer === option && answerStyle,
+              { width: (width - 52) / 2 },
+            ]}
+          >
+            <Text
+              style={[
+                styles.answerText,
+                { color: userAnswer === option ? "#ffffff" : "#333333" },
+              ]}
+            >
+              {option}
+            </Text>
           </Pressable>
         ))}
       </View>
@@ -130,8 +176,16 @@ const AnswerOptions = () => {
       />
       <Pressable
         onPress={() => handleCheckAnswer(inputAnswer)}
-        style={[styles.checkButton, userAnswer === inputAnswer && answerStyle]}>
-        <Text style={[styles.checkButtonText, { color: userAnswer ? "#ffffff" : "#333333" }]}>Check Answer</Text>
+        style={[styles.checkButton, userAnswer === inputAnswer && answerStyle]}
+      >
+        <Text
+          style={[
+            styles.checkButtonText,
+            { color: userAnswer ? "#ffffff" : "#333333" },
+          ]}
+        >
+          Check Answer
+        </Text>
       </Pressable>
     </View>
   );

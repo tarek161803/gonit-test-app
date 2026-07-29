@@ -8,7 +8,9 @@ import { Provider, useDispatch } from "react-redux";
 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { setUserInfo } from "../redux/slices/auth/authSlice";
+import { setSoundEnabled } from "../redux/slices/settings/settingsSlice";
 import { store } from "../redux/store";
+import { getSecureItem, SECURE_STORE_KEYS } from "../utils/secureStore";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -33,6 +35,15 @@ const InitialLayout = () => {
 
   useEffect(() => {
     handleGetUserInfo();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      const saved = await getSecureItem(SECURE_STORE_KEYS.SOUND_ENABLED);
+      if (typeof saved === "boolean") {
+        dispatch(setSoundEnabled(saved));
+      }
+    })();
   }, []);
 
   return <Slot />;

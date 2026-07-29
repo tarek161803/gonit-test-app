@@ -37,4 +37,5 @@ export const SECURE_STORE_KEYS = {
   USER: "user",
   TOKEN: "token",
   QUESTION_QUERY: "questionQuery",
+  SOUND_ENABLED: "soundEnabled",
 };
